@@ -840,9 +840,10 @@ function showPage(id) {
   }
   document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
   document.getElementById('page-' + id).classList.add('active');
-  document.querySelectorAll('nav button').forEach((b, i) => {
-    b.classList.toggle('active', ['stand','wedstrijden','beheer'][i] === id);
-  });
+  document.querySelectorAll('nav button').forEach(b => b.classList.remove('active'));
+  const pages = ['stand', 'wedstrijden', 'beheer'];
+  const idx = pages.indexOf(id);
+  if (idx >= 0) document.querySelectorAll('nav button')[idx].classList.add('active');
 }
 
 // ─── SETTINGS ─────────────────────────────────────────────────────────────────
