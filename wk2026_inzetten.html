@@ -751,6 +751,10 @@ function updateHeaderName() {
     setTimeout(() => document.getElementById('name-input').focus(), 100);
   };
   document.querySelector('header').appendChild(el);
+
+  // Beheer knop alleen zichtbaar voor Gijs
+  const beheerBtn = document.querySelector('nav button:last-child');
+  if (beheerBtn) beheerBtn.style.display = currentUser.name === 'Gijs' ? '' : 'none';
 }
 
 // Enter key in naam popup
@@ -830,6 +834,10 @@ function renderAll() {
 
 // ─── NAVIGATION ───────────────────────────────────────────────────────────────
 function showPage(id) {
+  if (id === 'beheer' && (!currentUser || currentUser.name !== 'Gijs')) {
+    toast('Alleen de admin heeft toegang tot beheer', 'error');
+    return;
+  }
   document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
   document.getElementById('page-' + id).classList.add('active');
   document.querySelectorAll('nav button').forEach((b, i) => {
