@@ -1,0 +1,3051 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>WK 2026 Inzetten</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>⚽</text></svg>">
+<style>
+  :root {
+    --green-dark: #0a1f0e;
+    --green-mid: #14391a;
+    --green-accent: #1d9e75;
+    --green-light: #5dcaa5;
+    --amber: #ef9f27;
+    --amber-dark: #ba7517;
+    --text-primary: #f0ede4;
+    --text-muted: #8a9e8e;
+    --border: rgba(93,202,165,0.15);
+    --border-strong: rgba(93,202,165,0.3);
+    --card-bg: rgba(20,57,26,0.6);
+    --danger: #e24b4a;
+    --danger-bg: rgba(226,75,74,0.12);
+    --success: #1d9e75;
+    --success-bg: rgba(29,158,117,0.12);
+  }
+
+  body.light {
+    --green-dark: #f0f7f1;
+    --green-mid: #ffffff;
+    --green-accent: #1d9e75;
+    --green-light: #0f6e56;
+    --amber: #ba7517;
+    --amber-dark: #854f0b;
+    --text-primary: #1a2e1c;
+    --text-muted: #4a6b4e;
+    --border: rgba(15,110,86,0.15);
+    --border-strong: rgba(15,110,86,0.25);
+    --card-bg: rgba(255,255,255,0.85);
+    --danger: #a32d2d;
+    --danger-bg: rgba(163,45,45,0.08);
+    --success: #0f6e56;
+    --success-bg: rgba(15,110,86,0.08);
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Inter', system-ui, sans-serif;
+    background: var(--green-dark);
+    color: var(--text-primary);
+    min-height: 100vh;
+    line-height: 1.6;
+  }
+
+  /* HEADER */
+  header {
+    background: var(--green-mid);
+    border-bottom: 1px solid var(--border-strong);
+    padding: 0 2rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 60px;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+  }
+
+  .logo {
+    font-size: 1.1rem;
+    font-weight: 600;
+    letter-spacing: 0.05em;
+    color: var(--green-light);
+  }
+  .logo span { color: var(--amber); }
+
+  nav { display: flex; gap: 0.25rem; }
+
+  nav button {
+    background: none;
+    border: none;
+    color: var(--text-muted);
+    padding: 0.4rem 0.9rem;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 0.875rem;
+    font-family: inherit;
+    transition: all 0.15s;
+  }
+  nav button:hover { color: var(--text-primary); background: var(--border); }
+  nav button.active { color: var(--amber); background: rgba(239,159,39,0.12); }
+
+  /* LAYOUT */
+  main { max-width: 900px; margin: 0 auto; padding: 2rem 1.5rem; }
+
+  .page { display: none; }
+  .page.active { display: block; }
+
+  /* CARDS */
+  .card {
+    background: var(--card-bg);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 1.25rem 1.5rem;
+    margin-bottom: 1rem;
+  }
+
+  .card-title {
+    font-size: 0.75rem;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    margin-bottom: 1rem;
+  }
+
+  /* SCOREBORD */
+  .scoreboard {
+    display: grid;
+    grid-template-columns: auto 1fr auto auto;
+    gap: 0;
+    background: var(--card-bg);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    overflow: hidden;
+  }
+
+  .sb-row {
+    display: contents;
+  }
+
+  .sb-row > div {
+    padding: 0.85rem 1rem;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+  }
+
+  .sb-row:last-child > div { border-bottom: none; }
+
+  .sb-rank {
+    font-size: 0.75rem;
+    color: var(--text-muted);
+    min-width: 2.5rem;
+    justify-content: center;
+  }
+
+  .sb-rank.gold { color: var(--amber); font-weight: 600; }
+  .sb-rank.silver { color: #c0c0c0; }
+  .sb-rank.bronze { color: #cd7f32; }
+
+  .sb-name { font-weight: 500; }
+
+  .sb-points {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: var(--green-light);
+    justify-content: flex-end;
+    padding-right: 0.75rem;
+    min-width: 80px;
+  }
+
+  .sb-change {
+    font-size: 0.75rem;
+    min-width: 50px;
+    justify-content: flex-end;
+    padding-right: 1rem;
+  }
+
+  .sb-change.up { color: var(--success); }
+  .sb-change.down { color: var(--danger); }
+
+  /* FORM ELEMENTS */
+  label {
+    font-size: 0.8rem;
+    color: var(--text-muted);
+    display: block;
+    margin-bottom: 0.3rem;
+    font-weight: 500;
+  }
+
+  input[type="text"], input[type="number"], select {
+    width: 100%;
+    background: var(--card-bg);
+    border: 1px solid var(--border-strong);
+    border-radius: 8px;
+    color: var(--text-primary);
+    padding: 0.55rem 0.8rem;
+    font-size: 0.9rem;
+    font-family: inherit;
+    outline: none;
+    transition: border-color 0.15s;
+    margin-bottom: 0.75rem;
+  }
+  input:focus, select:focus { border-color: var(--green-light); }
+  select option { background: var(--green-mid); }
+
+  .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+  .form-row-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 0.75rem; }
+
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    padding: 0.55rem 1.1rem;
+    border-radius: 8px;
+    font-size: 0.875rem;
+    font-family: inherit;
+    font-weight: 500;
+    cursor: pointer;
+    border: none;
+    transition: all 0.15s;
+  }
+
+  .btn-primary {
+    background: var(--green-accent);
+    color: #fff;
+  }
+  .btn-primary:hover { background: var(--green-light); }
+
+  .btn-amber {
+    background: var(--amber);
+    color: var(--green-dark);
+  }
+  .btn-amber:hover { background: #f5b03a; }
+
+  .btn-ghost {
+    background: transparent;
+    color: var(--text-muted);
+    border: 1px solid var(--border-strong);
+  }
+  .btn-ghost:hover { color: var(--text-primary); border-color: var(--green-light); }
+
+  .btn-danger {
+    background: transparent;
+    color: var(--danger);
+    border: 1px solid rgba(226,75,74,0.3);
+    padding: 0.3rem 0.6rem;
+    font-size: 0.8rem;
+  }
+  .btn-danger:hover { background: var(--danger-bg); }
+
+  /* MATCH CARD */
+  .match-card {
+    background: var(--card-bg);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 1.25rem 1.5rem;
+    margin-bottom: 0.75rem;
+  }
+
+  .match-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 1rem;
+  }
+
+  .match-teams {
+    font-size: 1.1rem;
+    font-weight: 600;
+  }
+
+  .match-meta {
+    font-size: 0.78rem;
+    color: var(--text-muted);
+    margin-top: 0.15rem;
+  }
+
+  .match-status {
+    font-size: 0.75rem;
+    padding: 0.25rem 0.65rem;
+    border-radius: 20px;
+    font-weight: 600;
+  }
+  .status-open { background: rgba(29,158,117,0.15); color: var(--green-light); }
+  .status-closed { background: rgba(239,159,39,0.15); color: var(--amber); }
+  .status-done { background: rgba(136,135,128,0.15); color: var(--text-muted); }
+
+  .odds-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 0.5rem;
+    margin-bottom: 0.75rem;
+  }
+
+  .odd-btn {
+    background: var(--card-bg);
+    border: 1px solid var(--border-strong);
+    border-radius: 8px;
+    padding: 0.5rem;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.15s;
+    color: var(--text-primary);
+    font-family: inherit;
+  }
+  .odd-btn:hover { border-color: var(--green-light); }
+  .odd-btn.selected { border-color: var(--amber); background: rgba(239,159,39,0.1); }
+
+  .odd-label { font-size: 0.7rem; color: var(--text-muted); }
+  .odd-value { font-size: 1rem; font-weight: 600; color: var(--amber); }
+
+  .bets-section { margin-top: 1rem; border-top: 1px solid var(--border); padding-top: 1rem; }
+
+  .bets-table {
+    display: grid;
+    grid-template-columns: 90px 1fr 80px 70px 80px;
+    font-size: 0.875rem;
+    width: 100%;
+  }
+
+  .bets-table.no-cancel {
+    grid-template-columns: 90px 1fr 70px 80px;
+  }
+
+  .bet-row {
+    display: contents;
+  }
+
+  .bet-row > * {
+    padding: 0.45rem 0.25rem;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+  }
+
+  .bet-player { font-weight: 500; }
+  .bet-prediction { color: var(--text-muted); }
+  .bet-amount { color: var(--amber); font-weight: 600; justify-content: flex-end; }
+  .bet-payout { justify-content: flex-end; }
+  .bet-payout.won { color: var(--success); font-weight: 600; }
+  .bet-payout.lost { color: var(--danger); }
+  .bet-cancel { justify-content: flex-end; }
+
+  /* TOAST */
+  #toast {
+    position: fixed;
+    bottom: 2rem;
+    left: 50%;
+    transform: translateX(-50%) translateY(100px);
+    background: var(--green-mid);
+    border: 1px solid var(--border-strong);
+    border-radius: 10px;
+    padding: 0.75rem 1.25rem;
+    font-size: 0.875rem;
+    z-index: 999;
+    transition: transform 0.25s;
+    white-space: nowrap;
+  }
+  #toast.show { transform: translateX(-50%) translateY(0); }
+  #toast.success { border-color: var(--success); color: var(--green-light); }
+  #toast.error { border-color: var(--danger); color: var(--danger); }
+
+  /* PAGE TITLES */
+  .page-title {
+    font-size: 1.4rem;
+    font-weight: 600;
+    margin-bottom: 0.25rem;
+  }
+  .page-sub {
+    font-size: 0.875rem;
+    color: var(--text-muted);
+    margin-bottom: 1.75rem;
+  }
+
+  /* PLAYER CHIPS */
+  .player-list { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-bottom: 1rem; }
+  .player-chip {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    background: var(--card-bg);
+    border: 1px solid var(--border-strong);
+    border-radius: 20px;
+    padding: 0.3rem 0.75rem;
+    font-size: 0.875rem;
+  }
+  .player-chip .pts { color: var(--amber); font-weight: 600; font-size: 0.8rem; }
+  .player-chip button {
+    background: none;
+    border: none;
+    color: var(--text-muted);
+    cursor: pointer;
+    font-size: 0.9rem;
+    padding: 0;
+    line-height: 1;
+  }
+  .player-chip button:hover { color: var(--danger); }
+
+  /* INZET MODAL */
+  .overlay {
+    position: fixed; inset: 0;
+    background: rgba(0,0,0,0.7);
+    z-index: 200;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    padding: 1rem;
+  }
+  .overlay.open { display: flex; }
+
+  .modal {
+    background: var(--green-mid);
+    border: 1px solid var(--border-strong);
+    border-radius: 16px;
+    padding: 1.75rem;
+    width: 100%;
+    max-width: 500px;
+    max-height: 90vh;
+    overflow-y: auto;
+  }
+
+  .modal-title {
+    font-size: 1.1rem;
+    font-weight: 600;
+    margin-bottom: 0.25rem;
+  }
+
+  .modal-sub { font-size: 0.8rem; color: var(--text-muted); margin-bottom: 1.5rem; }
+
+  .bet-type-tabs {
+    display: flex;
+    gap: 0.5rem;
+    margin-bottom: 1.25rem;
+  }
+  .bet-tab {
+    flex: 1;
+    padding: 0.5rem;
+    border-radius: 8px;
+    border: 1px solid var(--border-strong);
+    background: transparent;
+    color: var(--text-muted);
+    font-family: inherit;
+    font-size: 0.8rem;
+    cursor: pointer;
+    text-align: center;
+    transition: all 0.15s;
+  }
+  .bet-tab.active {
+    border-color: var(--amber);
+    color: var(--amber);
+    background: rgba(239,159,39,0.08);
+  }
+
+  .score-grid {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 0.35rem;
+    margin-bottom: 1rem;
+  }
+  .score-btn {
+    padding: 0.4rem 0;
+    border-radius: 6px;
+    border: 1px solid var(--border);
+    background: var(--card-bg);
+    color: var(--text-muted);
+    font-size: 0.78rem;
+    cursor: pointer;
+    text-align: center;
+    transition: all 0.15s;
+    font-family: inherit;
+  }
+  .score-btn:hover { border-color: var(--green-light); color: var(--text-primary); }
+  .score-btn.selected { border-color: var(--amber); background: rgba(239,159,39,0.1); color: var(--amber); }
+
+  .payout-preview {
+    background: var(--card-bg);
+    border-radius: 8px;
+    padding: 0.75rem 1rem;
+    margin: 0.75rem 0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 0.875rem;
+  }
+  .payout-preview .val { font-size: 1.1rem; font-weight: 600; color: var(--green-light); }
+
+  .section-divider {
+    border: none;
+    border-top: 1px solid var(--border);
+    margin: 1.5rem 0;
+  }
+
+  .empty-state {
+    text-align: center;
+    padding: 3rem 1rem;
+    color: var(--text-muted);
+    font-size: 0.9rem;
+  }
+
+  .tag {
+    display: inline-block;
+    font-size: 0.7rem;
+    padding: 0.15rem 0.5rem;
+    border-radius: 4px;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+  }
+  .tag-group { background: rgba(29,158,117,0.15); color: var(--green-light); }
+  .tag-knockout { background: rgba(239,159,39,0.15); color: var(--amber); }
+  .tag-final { background: rgba(226,75,74,0.15); color: #f09595; }
+
+  @media (max-width: 600px) {
+    .form-row, .form-row-3 { grid-template-columns: 1fr; }
+
+    header {
+      padding: 0 0.75rem;
+      height: auto;
+      flex-wrap: wrap;
+      gap: 0.4rem;
+      padding-top: 0.5rem;
+      padding-bottom: 0.5rem;
+    }
+
+    .logo { font-size: 0.95rem; }
+
+    nav {
+      width: 100%;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.3rem;
+    }
+
+    nav button {
+      flex: 1 1 30%;
+      min-width: 0;
+      padding: 0.4rem 0.2rem;
+      font-size: 0.7rem;
+      text-align: center;
+    }
+
+    main { padding: 1rem 0.75rem; }
+
+    .match-card { padding: 1rem; }
+
+    .odds-row { gap: 0.35rem; }
+
+    .odd-btn { padding: 0.4rem 0.25rem; }
+    .odd-label { font-size: 0.65rem; }
+    .odd-value { font-size: 0.9rem; }
+
+    .score-grid { grid-template-columns: repeat(5, 1fr); gap: 0.25rem; }
+    .score-btn { font-size: 0.7rem; padding: 0.35rem 0; }
+
+    .modal { padding: 1.25rem 1rem; }
+
+    .bet-type-tabs { gap: 0.35rem; }
+    .bet-tab { font-size: 0.75rem; padding: 0.45rem 0.25rem; }
+
+    .sb-row > div { padding: 0.65rem 0.6rem; }
+    .sb-points { min-width: 60px; font-size: 0.95rem; }
+    .sb-change { min-width: 40px; padding-right: 0.5rem; }
+
+    /* Uitslag invoer rijen op mobiel stapelen */
+    #result-matches-list > div { flex-direction: column; align-items: flex-start; gap: 0.5rem; }
+    #result-matches-list input { width: 100% !important; }
+    #result-matches-list select { width: 100% !important; }
+
+    .page-title { font-size: 1.2rem; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div style="display:flex; align-items:center; gap:0.75rem">
+    <div class="logo">WK <span>2026</span> Inzetten</div>
+    <button id="name-btn" onclick="openNamePopup()" style="background:none; border:1px solid var(--border-strong); border-radius:20px; color:var(--text-muted); font-size:0.78rem; padding:0.25rem 0.7rem; cursor:pointer; font-family:inherit" title="Naam wijzigen">—</button>
+    <button onclick="toggleLight()" id="theme-btn" style="background:none; border:1px solid var(--border-strong); border-radius:20px; color:var(--text-muted); font-size:0.85rem; padding:0.25rem 0.6rem; cursor:pointer; line-height:1" title="Wissel thema">🌙</button>
+  </div>
+  <nav>
+    <button class="active" onclick="showPage('dashboard')">Dashboard</button>
+    <button onclick="showPage('ranglijst')">Ranglijst</button>
+    <button onclick="showPage('winnaar')">Voorspelling</button>
+    <button onclick="showPage('wedstrijden')">Wedstrijden</button>
+    <button onclick="showPage('kladblok')">Kladblok</button>
+    <button onclick="showPage('beheer')">Beheer</button>
+  </nav>
+</header>
+
+<main>
+
+  <!-- DASHBOARD -->
+  <div class="page active" id="page-dashboard">
+    <div id="dashboard-container"></div>
+  </div>
+
+  <!-- RANGLIJST -->
+  <div class="page" id="page-ranglijst">
+    <div class="page-title">Ranglijst</div>
+    <div class="page-sub">Punten staan na uitbetaling van afgesloten wedstrijden</div>
+    <div id="scoreboard-container"></div>
+    <div style="display:grid; grid-template-columns:1fr 1fr; gap:1rem; margin-top:1.5rem">
+      <div>
+        <div class="card-title" style="margin-bottom:0.75rem">Meeste winst</div>
+        <div id="scoreboard-won"></div>
+      </div>
+      <div>
+        <div class="card-title" style="margin-bottom:0.75rem">Meeste verlies</div>
+        <div id="scoreboard-lost"></div>
+      </div>
+    </div>
+    <div id="chart-container" style="margin-top:2rem; display:none">
+      <div class="card-title" style="margin-bottom:1rem">Puntenverloop</div>
+      <div class="card" style="padding:1rem">
+        <canvas id="points-chart" height="220"></canvas>
+      </div>
+    </div>
+  </div>
+
+  <!-- WINNAAR -->
+  <div class="page" id="page-winnaar">
+    <div class="page-title">WK Voorspelling</div>
+    <div class="page-sub">Voorspel de winnaar van het WK 2026 — gratis, eenmalig, en niet meer te wijzigen. De odds zijn gebaseerd op actuele bookmaker kansen. Raad je het goed? Dan vallen de punten op je rekening.</div>
+    <div id="winner-bet-container"></div>
+    <div id="winner-bets-placed" style="margin-top:1.5rem"></div>
+  </div>
+
+  <!-- WEDSTRIJDEN -->
+  <div class="page" id="page-wedstrijden">
+    <div class="page-title">Wedstrijden</div>
+    <div class="page-sub">Klik op een wedstrijd om in te zetten · Admin kan uitslagen invoeren</div>
+    <div style="display:flex; gap:0.5rem; margin-bottom:1.25rem; flex-wrap:wrap;">
+      <button class="btn btn-ghost filter-btn active" onclick="filterMatches('all', this)">Alle</button>
+      <button class="btn btn-ghost filter-btn" onclick="filterMatches('open', this)">Open</button>
+      <button class="btn btn-ghost filter-btn" onclick="filterMatches('closed', this)">Gesloten</button>
+      <button class="btn btn-ghost filter-btn" onclick="filterMatches('done', this)">Afgerond</button>
+    </div>
+    <div id="matches-container"></div>
+  </div>
+
+  <!-- KLADBLOK -->
+  <div class="page" id="page-kladblok">
+    <div class="page-title">Kladblok</div>
+    <div class="page-sub">Notities en speciale inzetten per wedstrijd -- alleen lokaal opgeslagen op dit apparaat</div>
+    <div id="kladblok-container"></div>
+  </div>
+
+  <!-- BEHEER -->
+  <div class="page" id="page-beheer">
+    <div class="page-title">Beheer</div>
+    <div class="page-sub">Voeg spelers en wedstrijden toe · Stel instellingen in</div>
+
+    <!-- Instellingen -->
+    <div class="card">
+      <div class="card-title">Instellingen</div>
+      <div class="form-row">
+        <div>
+          <label>Startpunten per speler</label>
+          <input type="number" id="cfg-startpts" value="1000" min="100" step="100">
+        </div>
+        <div>
+          <label>Max inzet per wedstrijd (punten)</label>
+          <input type="number" id="cfg-maxbet" value="200" min="10" step="10">
+        </div>
+      </div>
+      <button class="btn btn-primary" onclick="saveSettings()">Opslaan</button>
+    </div>
+
+    <!-- Spelers -->
+    <div class="card">
+      <div class="card-title">Spelers</div>
+      <div id="player-list"></div>
+      <div class="form-row" style="margin-top:0.5rem">
+        <div>
+          <label>Naam</label>
+          <input type="text" id="new-player-name" placeholder="bijv. Gijs">
+        </div>
+        <div style="display:flex; align-items:flex-end;">
+          <button class="btn btn-primary" style="width:100%; margin-bottom:0.75rem" onclick="addPlayer()">+ Toevoegen</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Wedstrijd toevoegen -->
+    <div class="card">
+      <div class="card-title">Wedstrijd toevoegen</div>
+      <div class="form-row">
+        <div>
+          <label>Thuisteam</label>
+          <input type="text" id="m-home" placeholder="bijv. Nederland">
+        </div>
+        <div>
+          <label>Uitteam</label>
+          <input type="text" id="m-away" placeholder="bijv. België">
+        </div>
+      </div>
+      <div class="form-row">
+        <div>
+          <label>Datum & tijd</label>
+          <input type="text" id="m-date" placeholder="bijv. 11/06 20:00">
+        </div>
+        <div>
+          <label>Fase</label>
+          <select id="m-phase">
+            <option value="group">Groepsfase</option>
+            <option value="r16">16e finale</option>
+            <option value="r8">8e finale</option>
+            <option value="qf">Kwartfinale</option>
+            <option value="sf">Halve finale</option>
+            <option value="third">Troostfinale</option>
+            <option value="final">Finale</option>
+          </select>
+        </div>
+      </div>
+      <div style="margin-bottom:0.75rem">
+        <div class="card-title" style="margin-bottom:0.5rem">Winkansen (totaal = 100%)</div>
+        <div class="form-row-3">
+          <div>
+            <label>% Thuis wint</label>
+            <input type="number" id="m-ph" value="45" min="1" max="98" step="1">
+          </div>
+          <div>
+            <label>% Gelijk</label>
+            <input type="number" id="m-pd" value="30" min="1" max="98" step="1">
+          </div>
+          <div>
+            <label>% Uit wint</label>
+            <input type="number" id="m-pa" value="25" min="1" max="98" step="1">
+          </div>
+        </div>
+        <div id="odds-preview" style="font-size:0.8rem; color:var(--text-muted);"></div>
+      </div>
+      <button class="btn btn-amber" onclick="addMatch()">+ Wedstrijd toevoegen</button>
+    </div>
+
+    <!-- Wedstrijden beheren -->
+    <div class="card">
+      <div class="card-title">Wedstrijden beheren</div>
+      <div id="match-manage-list"></div>
+    </div>
+
+    <!-- Odds aanpassen -->
+    <div class="card">
+      <div class="card-title">Odds aanpassen</div>
+      <div id="odds-edit-list"></div>
+    </div>
+
+    <!-- WK Winnaar uitbetalen -->
+    <div class="card">
+      <div class="card-title">WK Winnaar uitbetalen</div>
+      <div style="font-size:0.82rem; color:var(--text-muted); margin-bottom:0.75rem">Voer het winnende land in om alle inzetten uit te betalen.</div>
+      <div style="display:flex; gap:0.75rem; align-items:center; flex-wrap:wrap">
+        <select id="winner-result-team" style="margin:0; flex:1">
+          <option value="">— Kies winnaar —</option>
+        </select>
+        <button class="btn btn-amber" onclick="payoutWinner()">Uitbetalen</button>
+      </div>
+    </div>
+
+    <!-- API -->
+    <div class="card">
+      <div class="card-title">Football-data.org API</div>
+      <div style="font-size:0.82rem; color:var(--text-muted); margin-bottom:0.75rem">
+        Haal WK 2026 wedstrijden en uitslagen automatisch op. Gratis key via <a href="https://www.football-data.org/client/register" style="color:var(--green-light)">football-data.org</a>.
+      </div>
+      <label>API key</label>
+      <input type="text" id="cfg-apikey" placeholder="bijv. 25d1574fee1a4c70b57c379339f51597" style="font-family:monospace; font-size:0.82rem">
+      <div style="display:flex; gap:0.75rem; flex-wrap:wrap">
+        <button class="btn btn-primary" onclick="saveApiKey()">Opslaan</button>
+        <button class="btn btn-amber" onclick="fetchMatches()">Wedstrijden ophalen</button>
+        <button class="btn btn-ghost" onclick="fetchResults()">Uitslagen bijwerken</button>
+      </div>
+      <div id="api-status" style="font-size:0.8rem; margin-top:0.75rem; color:var(--text-muted)"></div>
+    </div>
+
+    <div class="card" style="margin-top:1rem; border-color:rgba(226,75,74,0.2)">
+      <div class="card-title" style="color:var(--danger)">Gevaarlijke zone</div>
+      <div style="display:flex; flex-wrap:wrap; gap:0.75rem; align-items:center; margin-bottom:0.75rem">
+        <input type="text" id="reset-pw-name" placeholder="Naam speler" style="width:150px; margin:0">
+        <button class="btn btn-danger" onclick="adminResetPassword()">Wachtwoord resetten</button>
+      </div>
+      <button class="btn btn-danger" onclick="resetAll()">Alles resetten</button>
+      <span style="font-size:0.78rem; color:var(--text-muted); margin-left:1rem">Verwijdert alle data</span>
+    </div>
+  </div>
+
+</main>
+
+<!-- INZET OVERLAY -->
+<div class="overlay" id="bet-overlay">
+  <div class="modal">
+    <div class="modal-title" id="modal-match-title"></div>
+    <div class="modal-sub" id="modal-match-sub"></div>
+
+    <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:0.75rem; background:var(--card-bg); border-radius:8px; padding:0.6rem 0.9rem;">
+      <span style="font-size:0.8rem; color:var(--text-muted)">Inzetten als</span>
+      <span style="font-weight:600; color:var(--green-light)" id="modal-playername"></span>
+    </div>
+
+    <div class="bet-type-tabs" style="margin-top:0.75rem">
+      <button class="bet-tab active" onclick="setBetType('1x2', this)">1X2</button>
+      <button class="bet-tab" onclick="setBetType('score', this)">Juiste score</button>
+      <button class="bet-tab" onclick="setBetType('extra', this)">Extra</button>
+      <button class="bet-tab" id="custom-tab" onclick="setBetType('custom', this)" style="display:none">Speciaal</button>
+    </div>
+
+    <!-- 1X2 -->
+    <div id="bet-1x2">
+      <div class="odds-row" id="modal-odds-row"></div>
+      <div id="modal-final-result" style="display:none">
+        <div style="font-size:0.75rem; color:var(--text-muted); margin:0.75rem 0 0.5rem; font-weight:600; text-transform:uppercase; letter-spacing:0.06em">Einduitslag</div>
+        <div class="odds-row" id="modal-final-row"></div>
+      </div>
+    </div>
+
+    <!-- Juiste score -->
+    <div id="bet-score" style="display:none">
+      <div style="font-size:0.8rem; color:var(--text-muted); margin-bottom:0.5rem">Kies een score (thuis – uit)</div>
+      <div class="score-grid" id="score-grid"></div>
+    </div>
+
+    <!-- Extra markten -->
+    <div id="bet-extra" style="display:none">
+      <div style="font-size:0.8rem; color:var(--text-muted); margin-bottom:0.75rem">Speciale inzetten</div>
+      <div id="extra-options"></div>
+    </div>
+
+    <!-- Speciale (custom) inzetten -->
+    <div id="bet-custom" style="display:none">
+      <div style="font-size:0.8rem; color:var(--text-muted); margin-bottom:0.75rem">Speciale inzetten voor deze wedstrijd</div>
+      <div id="custom-options"></div>
+    </div>
+
+    <div>
+      <label>Inzet (punten) · max <span id="modal-max"></span></label>
+      <input type="number" id="modal-stake" placeholder="aantal punten" min="1" oninput="updatePayoutPreview()">
+    </div>
+
+    <div class="payout-preview">
+      <span style="color:var(--text-muted)">Mogelijke winst</span>
+      <span class="val" id="payout-preview-val">—</span>
+    </div>
+
+    <div style="display:flex; gap:0.75rem; margin-top:0.5rem">
+      <button class="btn btn-amber" style="flex:1" onclick="placeBet()">Inzetten</button>
+      <button class="btn btn-ghost" onclick="closeModal()">Annuleren</button>
+    </div>
+  </div>
+</div>
+
+<!-- ODDS EDIT MODAL -->
+<div class="overlay" id="odds-overlay" style="z-index:250">
+  <div class="modal" style="max-width:420px">
+    <div class="modal-title" id="odds-modal-title"></div>
+    <div class="modal-sub">Pas de winkansen aan (totaal moet 100% zijn)</div>
+    <div class="form-row-3">
+      <div>
+        <label id="odds-label-h">% Thuis</label>
+        <input type="number" id="odds-ph" min="1" max="98" step="1" oninput="updateOddsPreview()">
+      </div>
+      <div>
+        <label>% Gelijk</label>
+        <input type="number" id="odds-pd" min="1" max="98" step="1" oninput="updateOddsPreview()">
+      </div>
+      <div>
+        <label id="odds-label-a">% Uit</label>
+        <input type="number" id="odds-pa" min="1" max="98" step="1" oninput="updateOddsPreview()">
+      </div>
+    </div>
+    <div id="odds-modal-preview" style="font-size:0.8rem; color:var(--text-muted); margin-bottom:1rem"></div>
+    <div style="display:flex; gap:0.75rem">
+      <button class="btn btn-amber" style="flex:1" onclick="saveOdds()">Opslaan</button>
+      <button class="btn btn-ghost" onclick="document.getElementById('odds-overlay').classList.remove('open')">Annuleer</button>
+    </div>
+  </div>
+</div>
+
+<!-- UITSLAG VERWERKEN MODAL -->
+<div class="overlay" id="result-overlay" style="z-index:250">
+  <div class="modal" style="max-width:520px; max-height:85vh; overflow-y:auto">
+    <div class="modal-title" id="result-modal-title"></div>
+    <div class="modal-sub">Vul de uitslag in en klik op Verwerken</div>
+    <div class="form-row">
+      <div><label id="result-label-h">Thuis goals</label><input type="number" id="rm-h" min="0" max="20"></div>
+      <div><label id="result-label-a">Uit goals</label><input type="number" id="rm-a" min="0" max="20"></div>
+    </div>
+    <div class="form-row">
+      <div><label id="result-label-hth">Rust thuis</label><input type="number" id="rm-hth" min="0" max="20"></div>
+      <div><label id="result-label-hta">Rust uit</label><input type="number" id="rm-hta" min="0" max="20"></div>
+    </div>
+    <div class="form-row">
+      <div><label>Gele kaarten</label><input type="number" id="rm-yc" min="0" max="20"></div>
+      <div><label>Rode kaarten</label><input type="number" id="rm-rc" min="0" max="10"></div>
+    </div>
+    <div class="form-row">
+      <div>
+        <label>Penalty?</label>
+        <select id="rm-pen">
+          <option value="">Onbekend</option>
+          <option value="1">Ja</option>
+          <option value="0">Nee</option>
+        </select>
+      </div>
+      <div>
+        <label>Verlenging?</label>
+        <select id="rm-et">
+          <option value="">Onbekend</option>
+          <option value="1">Ja</option>
+          <option value="0">Nee</option>
+        </select>
+      </div>
+      <div>
+        <label>Strafschoppen?</label>
+        <select id="rm-shootout">
+          <option value="">Onbekend</option>
+          <option value="1">Ja</option>
+          <option value="0">Nee</option>
+        </select>
+      </div>
+    </div>
+    <div id="rm-custom-section"></div>
+    <div style="display:flex; gap:0.75rem; margin-top:0.75rem">
+      <button class="btn btn-amber" style="flex:1" onclick="submitResultModal()">Verwerken</button>
+      <button class="btn btn-ghost" onclick="document.getElementById('result-overlay').classList.remove('open')">Annuleer</button>
+    </div>
+  </div>
+</div>
+
+<!-- WEDSTRIJD BEWERKEN MODAL -->
+<div class="overlay" id="edit-match-overlay" style="z-index:250">
+  <div class="modal" style="max-width:480px">
+    <div class="modal-title">Wedstrijd bewerken</div>
+    <div class="modal-sub" id="edit-match-sub"></div>
+    <div class="form-row">
+      <div><label>Thuisteam</label><input type="text" id="edit-home"></div>
+      <div><label>Uitteam</label><input type="text" id="edit-away"></div>
+    </div>
+    <div class="form-row">
+      <div><label>Datum (dd/mm hh:mm)</label><input type="text" id="edit-date" placeholder="bijv. 14/06 22:00"></div>
+      <div><label>Fase</label>
+        <select id="edit-phase">
+          <option value="group">Groepsfase</option>
+          <option value="r16">16e finale</option>
+            <option value="r8">8e finale</option>
+          <option value="qf">Kwartfinale</option>
+          <option value="sf">Halve finale</option>
+          <option value="third">Troostfinale</option>
+          <option value="final">Finale</option>
+        </select>
+      </div>
+    </div>
+    <hr class="section-divider">
+    <div class="card-title" style="margin-bottom:0.75rem">Speciale inzetten</div>
+    <div id="edit-custom-list" style="margin-bottom:0.75rem"></div>
+    <div style="display:flex; gap:0.5rem; align-items:center; flex-wrap:wrap">
+      <input type="text" id="new-custom-label" placeholder="bijv. Depay scoort" style="flex:1; margin:0">
+      <input type="number" id="new-custom-odds" placeholder="odds" min="1.1" step="0.1" style="width:80px; margin:0">
+      <button class="btn btn-ghost" onclick="addCustomBet()">+ Toevoegen</button>
+    </div>
+    <hr class="section-divider">
+    <div style="display:flex; gap:0.75rem">
+      <button class="btn btn-amber" style="flex:1" onclick="saveMatchEdit()">Opslaan</button>
+      <button class="btn btn-danger" onclick="deleteMatch()">Verwijderen</button>
+      <button class="btn btn-ghost" onclick="document.getElementById('edit-match-overlay').classList.remove('open')">Annuleer</button>
+    </div>
+  </div>
+</div>
+
+<!-- SPELER PUNTEN AANPASSEN MODAL -->
+<div class="overlay" id="edit-player-overlay" style="z-index:250">
+  <div class="modal" style="max-width:380px">
+    <div class="modal-title" id="edit-player-title">Punten aanpassen</div>
+    <div class="modal-sub">Positief = punten toevoegen, negatief = punten aftrekken</div>
+    <label>Aanpassing</label>
+    <input type="number" id="edit-player-delta" placeholder="bijv. 50 of -50" style="margin-bottom:0.75rem">
+    <label>Reden (optioneel)</label>
+    <input type="text" id="edit-player-reason" placeholder="bijv. correctie uitbetaling">
+    <div style="display:flex; gap:0.75rem; margin-top:1rem">
+      <button class="btn btn-amber" style="flex:1" onclick="savePlayerPoints()">Opslaan</button>
+      <button class="btn btn-ghost" onclick="document.getElementById('edit-player-overlay').classList.remove('open')">Annuleer</button>
+    </div>
+  </div>
+</div>
+
+<!-- INZETTEN BEHEREN MODAL -->
+<div class="overlay" id="bets-admin-overlay" style="z-index:250">
+  <div class="modal" style="max-width:520px">
+    <div class="modal-title" id="bets-admin-title">Inzetten beheren</div>
+    <div class="modal-sub">Klik op een inzet om te verwijderen</div>
+    <div id="bets-admin-list"></div>
+    <button class="btn btn-ghost" style="width:100%; margin-top:1rem" onclick="document.getElementById('bets-admin-overlay').classList.remove('open')">Sluiten</button>
+  </div>
+</div>
+
+<!-- NAAM POPUP -->
+<div class="overlay" id="name-overlay" style="z-index:300">
+  <div class="modal" style="max-width:380px; text-align:center">
+    <div style="font-size:2rem; margin-bottom:0.5rem">⚽</div>
+    <div class="modal-title" style="margin-bottom:0.25rem" id="login-title">Welkom bij WK 2026!</div>
+    <div class="modal-sub" id="login-sub">Vul je naam en wachtwoord in om in te loggen. Eerste keer? Dan wordt je account aangemaakt.</div>
+    <div style="font-size:0.72rem; color:var(--danger); background:var(--danger-bg); border-radius:8px; padding:0.5rem 0.75rem; margin-bottom:0.75rem; text-align:left">
+      Gebruik een wachtwoord dat je nergens anders gebruikt — het wordt onversleuteld opgeslagen.
+    </div>
+    <input type="text" id="name-input" placeholder="Jouw naam" style="text-align:center; font-size:1rem; margin-bottom:0.5rem" autocomplete="username">
+    <input type="password" id="password-input" placeholder="Wachtwoord" style="text-align:center; font-size:1rem; margin-bottom:0.75rem" autocomplete="current-password">
+    <div id="login-error" style="font-size:0.8rem; color:var(--danger); margin-bottom:0.5rem; display:none"></div>
+    <button class="btn btn-amber" style="width:100%" onclick="doLogin()">Inloggen / Registreren</button>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div id="toast"></div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<script>
+// ─── STATE ───────────────────────────────────────────────────────────────────
+let state = {
+  settings: { startPts: 1000, maxBet: 200 },
+  players: [],
+  matches: [],
+  bets: []
+};
+
+let currentMatchId = null;
+let currentBetType = '1x2';
+let selectedOutcome = null;
+let currentUser = null; // { id, name } van ingelogde speler
+
+// ─── LOGIN ────────────────────────────────────────────────────────────────────
+function checkName() {
+  const saved = localStorage.getItem('wk2026_name');
+  if (saved) {
+    currentUser = JSON.parse(saved);
+    updateHeaderName();
+  } else {
+    document.getElementById('name-overlay').classList.add('open');
+    setTimeout(() => document.getElementById('name-input').focus(), 100);
+  }
+}
+
+function showLoginError(msg) {
+  const el = document.getElementById('login-error');
+  el.textContent = msg;
+  el.style.display = msg ? 'block' : 'none';
+}
+
+async function doLogin() {
+  const raw = document.getElementById('name-input').value.trim();
+  const pw = document.getElementById('password-input').value;
+  if (!raw) return showLoginError('Voer je naam in');
+  if (!pw) return showLoginError('Voer een wachtwoord in');
+  const name = raw.charAt(0).toUpperCase() + raw.slice(1);
+
+  // Haal accounts op uit Firebase
+  const accounts = await fbGetAccounts();
+  const existing = accounts[name.toLowerCase()];
+
+  if (existing) {
+    // Account bestaat — check wachtwoord
+    if (existing.password !== pw) return showLoginError('Verkeerd wachtwoord');
+    const player = state.players.find(p => p.name.toLowerCase() === name.toLowerCase());
+    currentUser = { id: player ? player.id : null, name: existing.name };
+  } else {
+    // Nieuw account aanmaken
+    await fbSetAccount(name, pw);
+    const player = state.players.find(p => p.name.toLowerCase() === name.toLowerCase());
+    currentUser = { id: player ? player.id : null, name };
+  }
+
+  localStorage.setItem('wk2026_name', JSON.stringify(currentUser));
+  document.getElementById('name-overlay').classList.remove('open');
+  showLoginError('');
+  updateHeaderName();
+  renderDashboard();
+}
+
+async function fbGetAccounts() {
+  try {
+    const res = await fetch('https://wk2026-210e6-default-rtdb.europe-west1.firebasedatabase.app/accounts.json');
+    const data = await res.json();
+    return data || {};
+  } catch { return {}; }
+}
+
+async function fbSetAccount(name, password) {
+  await fetch(`https://wk2026-210e6-default-rtdb.europe-west1.firebasedatabase.app/accounts/${name.toLowerCase()}.json`, {
+    method: 'PUT',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ name, password })
+  });
+}
+
+function renderOddsEditList() {
+  const el = document.getElementById('odds-edit-list');
+  if (!el) return;
+  const open = state.matches.filter(m => m.status !== 'done');
+  if (!open.length) { el.innerHTML = '<div style="color:var(--text-muted); font-size:0.85rem">Geen open wedstrijden.</div>'; return; }
+  el.innerHTML = open.sort((a, b) => {
+    const da = parseMatchDate(a.date), db = parseMatchDate(b.date);
+    if (!da && !db) return 0; if (!da) return 1; if (!db) return -1; return db - da;
+  }).map(m => `
+    <div style="display:flex; align-items:center; justify-content:space-between; padding:0.6rem 0; border-bottom:1px solid var(--border); gap:0.5rem; flex-wrap:wrap">
+      <div style="font-size:0.9rem; font-weight:500">${flag(m.home)}${m.home} - ${flag(m.away)}${m.away}</div>
+      <div style="display:flex; gap:0.5rem; align-items:center">
+        <span style="font-size:0.78rem; color:var(--text-muted)">${(100/m.probs.h).toFixed(2)}x / ${(100/m.probs.d).toFixed(2)}x / ${(100/m.probs.a).toFixed(2)}x</span>
+        <button class="btn btn-ghost" style="font-size:0.78rem; padding:0.3rem 0.7rem" onclick="openOddsModal(${m.id})">Aanpassen</button>
+      </div>
+    </div>`).join('');
+}
+
+let editingMatchId = null;
+
+function openOddsModal(matchId) {
+  const m = state.matches.find(m => m.id == matchId);
+  if (!m) return;
+  editingMatchId = matchId;
+  document.getElementById('odds-modal-title').textContent = `${flag(m.home)}${m.home} - ${flag(m.away)}${m.away}`;
+  document.getElementById('odds-label-h').textContent = `% ${m.home}`;
+  document.getElementById('odds-label-a').textContent = `% ${m.away}`;
+  document.getElementById('odds-ph').value = m.probs.h;
+  document.getElementById('odds-pd').value = m.probs.d;
+  document.getElementById('odds-pa').value = m.probs.a;
+  updateOddsPreview();
+  document.getElementById('odds-overlay').classList.add('open');
+}
+
+function updateOddsPreview() {
+  const ph = parseFloat(document.getElementById('odds-ph').value) || 0;
+  const pd = parseFloat(document.getElementById('odds-pd').value) || 0;
+  const pa = parseFloat(document.getElementById('odds-pa').value) || 0;
+  const total = ph + pd + pa;
+  const el = document.getElementById('odds-modal-preview');
+  if (Math.abs(total - 100) < 0.1) {
+    el.textContent = `Odds: ${(100/ph).toFixed(2)}x / ${(100/pd).toFixed(2)}x / ${(100/pa).toFixed(2)}x`;
+    el.style.color = 'var(--green-light)';
+  } else {
+    el.textContent = `Totaal: ${total}% (moet 100% zijn)`;
+    el.style.color = 'var(--danger)';
+  }
+}
+
+function saveOdds() {
+  const ph = parseFloat(document.getElementById('odds-ph').value);
+  const pd = parseFloat(document.getElementById('odds-pd').value);
+  const pa = parseFloat(document.getElementById('odds-pa').value);
+  if (Math.abs(ph + pd + pa - 100) > 0.1) return toast('Kansen moeten optellen tot 100%', 'error');
+  const m = state.matches.find(m => m.id == editingMatchId);
+  if (!m) return;
+  m.probs = { h: ph, d: pd, a: pa };
+  m.oddsUpdatedAt = Date.now();
+  save();
+  renderAll();
+  document.getElementById('odds-overlay').classList.remove('open');
+  toast('Odds opgeslagen', 'success');
+}
+
+document.getElementById('odds-overlay').addEventListener('click', e => {
+  if (e.target === document.getElementById('odds-overlay'))
+    document.getElementById('odds-overlay').classList.remove('open');
+});
+
+function renderMatchManageList() {
+  const el = document.getElementById('match-manage-list');
+  if (!el) return;
+  const active = state.matches.filter(m => m.status !== 'done');
+  if (!active.length) { el.innerHTML = '<div style="color:var(--text-muted); font-size:0.85rem">Geen open wedstrijden.</div>'; return; }
+  const sorted = [...active].sort((a, b) => {
+    const statusOrder = { closed: 0, open: 1 };
+    const sd = (statusOrder[a.status] ?? 1) - (statusOrder[b.status] ?? 1);
+    if (sd !== 0) return sd;
+    const da = parseMatchDate(a.date), db = parseMatchDate(b.date);
+    if (!da && !db) return 0; if (!da) return 1; if (!db) return -1; return db - da;
+  });
+  el.innerHTML = sorted.map(m => `
+    <div style="display:flex; align-items:center; justify-content:space-between; padding:0.6rem 0; border-bottom:1px solid var(--border); gap:0.5rem; flex-wrap:wrap">
+      <div>
+        <div style="font-size:0.9rem; font-weight:500">${flag(m.home)}${m.home} - ${flag(m.away)}${m.away}</div>
+        <div style="font-size:0.75rem; color:var(--text-muted)">${m.date || ''} · ${{group:'Groepsfase',r16:'16e finale',r8:'8e finale',qf:'Kwartfinale',sf:'Halve finale',third:'Troostfinale',final:'Finale',knockout:'Knockout'}[m.phase] || m.phase}</div>
+      </div>
+      <div style="display:flex; gap:0.4rem; flex-wrap:wrap">
+        ${m.status === 'open' ? `<button class="btn btn-ghost" style="font-size:0.78rem; padding:0.3rem 0.6rem" onclick="toggleMatchStatus(${m.id})">Sluiten</button>` : `<span style="font-size:0.75rem; color:var(--amber); padding:0.3rem 0.2rem">Gesloten</span>`}
+        <button class="btn btn-amber" style="font-size:0.78rem; padding:0.3rem 0.6rem" onclick="openResultModal(${m.id})">Verwerken</button>
+        <button class="btn btn-ghost" style="font-size:0.78rem; padding:0.3rem 0.6rem" onclick="openMatchEdit(${m.id})">Bewerken</button>
+        <button class="btn btn-ghost" style="font-size:0.78rem; padding:0.3rem 0.6rem" onclick="openBetsAdmin(${m.id})">Inzetten</button>
+      </div>
+    </div>`).join('');
+}
+
+// ─── UITSLAG VERWERKEN MODAL ──────────────────────────────────────────────────
+let resultModalMatchId = null;
+
+function openResultModal(matchId) {
+  const m = state.matches.find(m => m.id == matchId);
+  if (!m) return;
+  resultModalMatchId = matchId;
+  document.getElementById('result-modal-title').textContent = `${flag(m.home)}${m.home} - ${flag(m.away)}${m.away}`;
+  document.getElementById('result-label-h').textContent = `${m.home} goals`;
+  document.getElementById('result-label-a').textContent = `${m.away} goals`;
+  document.getElementById('result-label-hth').textContent = `Rust ${m.home}`;
+  document.getElementById('result-label-hta').textContent = `Rust ${m.away}`;
+  ['rm-h','rm-a','rm-hth','rm-hta','rm-yc','rm-rc'].forEach(id => document.getElementById(id).value = '');
+  document.getElementById('rm-pen').value = '';
+  document.getElementById('rm-et').value = '';
+  document.getElementById('rm-shootout').value = '';
+  // Custom bets -- voorinvullen vanuit Kladblok
+  const customs = m.customBets || [];
+  const klad = getKladblokData()[m.id];
+  document.getElementById('rm-custom-section').innerHTML = customs.length
+    ? `<hr class="section-divider"><div class="card-title" style="margin-bottom:0.5rem">Speciale inzetten</div>` +
+      customs.map(c => {
+        const kladVal = klad && klad.customs ? klad.customs[c.id] : undefined;
+        const selected = kladVal === true ? '1' : kladVal === false ? '0' : '';
+        return `<div style="display:flex; align-items:center; gap:0.75rem; margin-bottom:0.4rem; font-size:0.875rem">
+        <span style="flex:1">${c.label}</span>
+        <select id="rm-custom-${c.id}" style="margin:0; width:90px">
+          <option value="" ${selected === '' ? 'selected' : ''}>?</option>
+          <option value="1" ${selected === '1' ? 'selected' : ''}>Ja</option>
+          <option value="0" ${selected === '0' ? 'selected' : ''}>Nee</option>
+        </select>
+      </div>`;
+      }).join('')
+    : '';
+  formActive = true;
+  document.getElementById('result-overlay').classList.add('open');
+}
+
+function submitResultModal() {
+  const m = state.matches.find(m => m.id == resultModalMatchId);
+  if (!m) return;
+  const hg = parseInt(document.getElementById('rm-h').value);
+  const ag = parseInt(document.getElementById('rm-a').value);
+  if (isNaN(hg) || isNaN(ag)) return toast('Voer beide scores in', 'error');
+  const outcome = hg > ag ? 'h' : hg < ag ? 'a' : 'd';
+  const hth = document.getElementById('rm-hth').value;
+  const hta = document.getElementById('rm-hta').value;
+  const yc  = document.getElementById('rm-yc').value;
+  const rc  = document.getElementById('rm-rc').value;
+  const pen = document.getElementById('rm-pen').value;
+  const et  = document.getElementById('rm-et').value;
+  const so  = document.getElementById('rm-shootout').value;
+  const customResults = {};
+  (m.customBets || []).forEach(c => {
+    const el = document.getElementById(`rm-custom-${c.id}`);
+    if (el && el.value !== '') customResults[c.id] = el.value === '1';
+  });
+  m.result = {
+    homeGoals: hg, awayGoals: ag, outcome,
+    htHome:      hth !== '' ? parseInt(hth) : null,
+    htAway:      hta !== '' ? parseInt(hta) : null,
+    yellowCards: yc  !== '' ? parseInt(yc)  : null,
+    redCards:    rc  !== '' ? parseInt(rc)   : null,
+    penalty:     pen !== '' ? pen === '1'    : null,
+    extraTime:   et  !== '' ? et  === '1'    : null,
+    shootout:    so  !== '' ? so  === '1'    : null,
+    customResults,
+  };
+  m.status = 'done';
+  state.bets.filter(b => b.matchId == resultModalMatchId).forEach(b => {
+    if (didWin(b, m)) {
+      const player = state.players.find(p => p.id === b.playerId);
+      if (player) player.points += Math.round(b.stake * b.odds);
+    }
+  });
+  save();
+  renderAll();
+  formActive = false;
+  document.getElementById('result-overlay').classList.remove('open');
+  toast(`Uitslag verwerkt: ${m.home} ${hg}-${ag} ${m.away}`, 'success');
+}
+
+document.getElementById('result-overlay').addEventListener('click', e => {
+  if (e.target === document.getElementById('result-overlay')) {
+    document.getElementById('result-overlay').classList.remove('open');
+    formActive = false;
+  }
+});
+
+// ─── WEDSTRIJD BEWERKEN ───────────────────────────────────────────────────────
+let editingMatchId2 = null;
+
+function openMatchEdit(matchId) {
+  const m = state.matches.find(m => m.id == matchId);
+  if (!m) return;
+  editingMatchId2 = matchId;
+  document.getElementById('edit-match-sub').textContent = `${flag(m.home)}${m.home} - ${flag(m.away)}${m.away}`;
+  document.getElementById('edit-home').value = m.home;
+  document.getElementById('edit-away').value = m.away;
+  document.getElementById('edit-date').value = m.date || '';
+  document.getElementById('edit-phase').value = m.phase || 'group';
+  renderCustomBetList(m);
+  document.getElementById('edit-match-overlay').classList.add('open');
+}
+
+function renderCustomBetList(m) {
+  const list = document.getElementById('edit-custom-list');
+  const customs = m.customBets || [];
+  if (!customs.length) { list.innerHTML = '<div style="font-size:0.82rem; color:var(--text-muted)">Nog geen speciale inzetten.</div>'; return; }
+  list.innerHTML = customs.map(c =>
+    `<div style="display:flex; align-items:center; gap:0.5rem; margin-bottom:0.35rem">
+      <span style="flex:1; font-size:0.85rem">${c.label}</span>
+      <span style="color:var(--amber); font-size:0.82rem">${c.odds}x</span>
+      <button class="btn btn-danger" style="padding:0.2rem 0.4rem; font-size:0.72rem" onclick="removeCustomBet('${c.id}')">×</button>
+    </div>`
+  ).join('');
+}
+
+function addCustomBet() {
+  const label = document.getElementById('new-custom-label').value.trim();
+  const odds = parseFloat(document.getElementById('new-custom-odds').value);
+  if (!label) return toast('Voer een beschrijving in', 'error');
+  if (!odds || odds < 1.1) return toast('Voer geldige odds in (min 1.1)', 'error');
+  const m = state.matches.find(m => m.id == editingMatchId2);
+  if (!m) return;
+  if (!m.customBets) m.customBets = [];
+  m.customBets.push({ id: Date.now().toString(), label, odds });
+  document.getElementById('new-custom-label').value = '';
+  document.getElementById('new-custom-odds').value = '';
+  renderCustomBetList(m);
+}
+
+function removeCustomBet(customId) {
+  const m = state.matches.find(m => m.id == editingMatchId2);
+  if (!m) return;
+  m.customBets = (m.customBets || []).filter(c => c.id !== customId);
+  renderCustomBetList(m);
+}
+
+function saveMatchEdit() {
+  const m = state.matches.find(m => m.id == editingMatchId2);
+  if (!m) return;
+  m.home  = document.getElementById('edit-home').value.trim() || m.home;
+  m.away  = document.getElementById('edit-away').value.trim() || m.away;
+  m.date  = document.getElementById('edit-date').value.trim();
+  m.phase = document.getElementById('edit-phase').value;
+  save();
+  renderAll();
+  document.getElementById('edit-match-overlay').classList.remove('open');
+  toast('Wedstrijd bijgewerkt', 'success');
+}
+
+function deleteMatch() {
+  const m = state.matches.find(m => m.id == editingMatchId2);
+  if (!m) return;
+  if (!confirm(`${m.home} - ${m.away} verwijderen? Alle bijbehorende inzetten worden ook verwijderd.`)) return;
+  state.matches = state.matches.filter(m => m.id != editingMatchId2);
+  state.bets = state.bets.filter(b => b.matchId != editingMatchId2);
+  save();
+  renderAll();
+  document.getElementById('edit-match-overlay').classList.remove('open');
+  toast('Wedstrijd verwijderd', 'success');
+}
+
+// ─── SPELER PUNTEN AANPASSEN ──────────────────────────────────────────────────
+let editingPlayerId = null;
+
+function openPlayerEdit(playerId) {
+  const p = state.players.find(p => p.id === playerId);
+  if (!p) return;
+  editingPlayerId = playerId;
+  document.getElementById('edit-player-title').textContent = `${p.name} aanpassen (${p.points} pts)`;
+  document.getElementById('edit-player-delta').value = '';
+  document.getElementById('edit-player-reason').value = '';
+  document.getElementById('edit-player-overlay').classList.add('open');
+}
+
+function savePlayerPoints() {
+  const delta = parseInt(document.getElementById('edit-player-delta').value);
+  if (isNaN(delta)) return toast('Voer een getal in', 'error');
+  const p = state.players.find(p => p.id === editingPlayerId);
+  if (!p) return;
+  p.points += delta;
+  save();
+  renderAll();
+  document.getElementById('edit-player-overlay').classList.remove('open');
+  toast(`${p.name}: ${delta > 0 ? '+' : ''}${delta} pts (nu ${p.points} pts)`, 'success');
+}
+
+// ─── INZETTEN BEHEREN ─────────────────────────────────────────────────────────
+function openBetsAdmin(matchId) {
+  const m = state.matches.find(m => m.id == matchId);
+  if (!m) return;
+  document.getElementById('bets-admin-title').textContent = `${flag(m.home)}${m.home} - ${flag(m.away)}${m.away}`;
+  renderBetsAdminList(matchId);
+  document.getElementById('bets-admin-overlay').classList.add('open');
+}
+
+function renderBetsAdminList(matchId) {
+  const bets = state.bets.filter(b => b.matchId == matchId);
+  const m = state.matches.find(m => m.id == matchId);
+  const el = document.getElementById('bets-admin-list');
+  if (!bets.length) { el.innerHTML = '<div style="color:var(--text-muted); font-size:0.85rem">Geen inzetten.</div>'; return; }
+  el.innerHTML = `<div class="bets-table no-cancel" style="grid-template-columns: 90px 1fr 70px 60px">` +
+    bets.map(b => {
+      const p = state.players.find(p => p.id === b.playerId);
+      return `<div class="bet-row">
+        <span class="bet-player">${p ? p.name : '?'}</span>
+        <span class="bet-prediction">${betLabel(b, m)}</span>
+        <span class="bet-amount">${b.stake} pts</span>
+        <span class="bet-cancel"><button class="btn btn-danger" style="padding:0.2rem 0.4rem; font-size:0.72rem" onclick="adminDeleteBet(${b.id}, ${matchId})">×</button></span>
+      </div>`;
+    }).join('') + '</div>';
+}
+
+function adminDeleteBet(betId, matchId) {
+  const bet = state.bets.find(b => b.id === betId);
+  if (!bet) return;
+  const m = state.matches.find(m => m.id == matchId);
+  if (!confirm('Inzet verwijderen? Punten worden teruggestort.')) return;
+  const player = state.players.find(p => p.id === bet.playerId);
+  if (player && m && m.status !== 'done') player.points += bet.stake;
+  state.bets = state.bets.filter(b => b.id !== betId);
+  save();
+  renderAll();
+  renderBetsAdminList(matchId);
+  toast('Inzet verwijderd', 'success');
+}
+
+// Overlay close on click outside
+['edit-match-overlay', 'edit-player-overlay', 'bets-admin-overlay'].forEach(id => {
+  document.getElementById(id).addEventListener('click', e => {
+    if (e.target === document.getElementById(id))
+      document.getElementById(id).classList.remove('open');
+  });
+});
+
+// ─── KLADBLOK ─────────────────────────────────────────────────────────────────
+function getKladblokData() {
+  try {
+    return JSON.parse(localStorage.getItem('wk2026_kladblok') || '{}');
+  } catch (e) { return {}; }
+}
+
+function saveKladblokData(data) {
+  localStorage.setItem('wk2026_kladblok', JSON.stringify(data));
+}
+
+function renderKladblok() {
+  const el = document.getElementById('kladblok-container');
+  if (!el) return;
+  const data = getKladblokData();
+
+  const active = state.matches
+    .filter(m => m.status !== 'done')
+    .sort((a, b) => {
+      const statusOrder = { closed: 0, open: 1 };
+      const sd = (statusOrder[a.status] ?? 1) - (statusOrder[b.status] ?? 1);
+      if (sd !== 0) return sd;
+      const da = parseMatchDate(a.date), db = parseMatchDate(b.date);
+      if (!da && !db) return 0; if (!da) return 1; if (!db) return -1; return db - da;
+    });
+
+  if (!active.length) { el.innerHTML = '<div class="empty-state">Geen lopende wedstrijden.</div>'; return; }
+
+  el.innerHTML = active.map(m => {
+    const md = data[m.id] || { note: '', customs: {} };
+    const customs = m.customBets || [];
+    return `<div class="match-card" style="margin-bottom:0.75rem">
+      <div class="match-header">
+        <div>
+          <span class="match-teams">${flag(m.home)}${m.home} – ${flag(m.away)}${m.away}</span>
+          <div class="match-meta">
+            ${m.date ? m.date : ''}
+            ${m.status === 'open' && m.date ? `<span class="countdown" data-date="${m.date}" style="margin-left:0.5rem; color:var(--amber); font-weight:600"></span>` : ''}
+          </div>
+        </div>
+        <span class="match-status ${{open:'status-open',closed:'status-closed'}[m.status]}">${{open:'Open',closed:'Gesloten'}[m.status]}</span>
+      </div>
+      ${customs.length ? `
+        <div style="margin:0.75rem 0">
+          ${customs.map(c => {
+            const val = md.customs[c.id];
+            return `<div style="display:flex; align-items:center; justify-content:space-between; padding:0.4rem 0; border-bottom:1px solid var(--border)">
+              <span style="font-size:0.875rem">${c.label}</span>
+              <div style="display:flex; gap:0.3rem">
+                <button class="btn ${val === true ? 'btn-amber' : 'btn-ghost'}" style="padding:0.25rem 0.6rem; font-size:0.75rem" onclick="setKladblokCustom(${m.id}, '${c.id}', true)">Ja</button>
+                <button class="btn ${val === false ? 'btn-amber' : 'btn-ghost'}" style="padding:0.25rem 0.6rem; font-size:0.75rem" onclick="setKladblokCustom(${m.id}, '${c.id}', false)">Nee</button>
+              </div>
+            </div>`;
+          }).join('')}
+        </div>` : ''}
+      <textarea id="note-${m.id}" placeholder="Notities..." style="width:100%; min-height:60px; background:var(--card-bg); border:1px solid var(--border-strong); border-radius:8px; color:var(--text-primary); padding:0.55rem 0.8rem; font-size:0.875rem; font-family:inherit; resize:vertical; margin-top:0.5rem" oninput="saveKladblokNote(${m.id}, this.value)">${md.note || ''}</textarea>
+    </div>`;
+  }).join('');
+
+  updateCountdowns();
+}
+
+function setKladblokCustom(matchId, customId, value) {
+  const data = getKladblokData();
+  if (!data[matchId]) data[matchId] = { note: '', customs: {} };
+  data[matchId].customs[customId] = value;
+  saveKladblokData(data);
+  renderKladblok();
+}
+
+function saveKladblokNote(matchId, value) {
+  const data = getKladblokData();
+  if (!data[matchId]) data[matchId] = { note: '', customs: {} };
+  data[matchId].note = value;
+  saveKladblokData(data);
+}
+
+// ─── AFTEL TIMER ──────────────────────────────────────────────────────────────
+function updateCountdowns() {
+  document.querySelectorAll('.countdown').forEach(el => {
+    const date = parseMatchDate(el.dataset.date);
+    if (!date) { el.textContent = ''; return; }
+    const diff = date.getTime() - Date.now();
+    if (diff <= 0) { el.textContent = 'Begonnen'; el.style.color = 'var(--success)'; return; }
+    const totalSec = Math.floor(diff / 1000);
+    const h = Math.floor(totalSec / 3600);
+    const m = Math.floor((totalSec % 3600) / 60);
+    const s = totalSec % 60;
+    if (diff > 15 * 60 * 1000) {
+      el.textContent = `-${String(h).padStart(2,'0')}:${String(m).padStart(2,'0')}`;
+    } else {
+      el.textContent = `-${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`;
+      el.style.color = 'var(--danger)';
+    }
+  });
+}
+setInterval(updateCountdowns, 1000);
+
+function toggleLight() {
+  const isLight = document.body.classList.toggle('light');
+  document.getElementById('theme-btn').textContent = isLight ? '🌑' : '🌙';
+  localStorage.setItem('wk2026_theme', isLight ? 'light' : 'dark');
+  renderChart();
+}
+
+function applyTheme() {
+  const theme = localStorage.getItem('wk2026_theme');
+  if (theme === 'light') {
+    document.body.classList.add('light');
+    const btn = document.getElementById('theme-btn');
+    if (btn) btn.textContent = '🌑';
+  }
+}
+
+function openNamePopup() {
+  document.getElementById('name-input').value = currentUser ? currentUser.name : '';
+  document.getElementById('password-input').value = '';
+  showLoginError('');
+  document.getElementById('name-overlay').classList.add('open');
+  setTimeout(() => document.getElementById('name-input').focus(), 100);
+}
+
+function updateHeaderName() {
+  const btn = document.getElementById('name-btn');
+  if (btn) btn.textContent = currentUser ? currentUser.name : '👤';
+
+  // Beheer en Kladblok knop alleen zichtbaar voor Gijs
+  const beheerBtn = document.querySelector('nav button:last-child');
+  const kladblokBtn = document.querySelector('nav button:nth-last-child(2)');
+  const isAdmin = currentUser && currentUser.name === 'Gijs';
+  if (beheerBtn) beheerBtn.style.display = isAdmin ? '' : 'none';
+  if (kladblokBtn) kladblokBtn.style.display = isAdmin ? '' : 'none';
+}
+
+// Enter key in naam popup
+document.addEventListener('DOMContentLoaded', () => {
+  ['name-input', 'password-input'].forEach(id => {
+    document.getElementById(id).addEventListener('keydown', e => {
+      if (e.key === 'Enter') doLogin();
+    });
+  });
+});
+
+// ─── FIREBASE ─────────────────────────────────────────────────────────────────
+const FB_URL = 'https://wk2026-210e6-default-rtdb.europe-west1.firebasedatabase.app/state.json';
+
+async function fbGet() {
+  const res = await fetch(FB_URL);
+  if (!res.ok) throw new Error('Firebase lezen mislukt');
+  return res.json();
+}
+
+async function fbSet(data) {
+  const res = await fetch(FB_URL, {
+    method: 'PUT',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(data)
+  });
+  if (!res.ok) throw new Error('Firebase schrijven mislukt');
+}
+
+let lastSaveTime = 0;
+let formActive = false;
+
+setInterval(async () => {
+  if (formActive) return; // niet pollen als iemand in het formulier bezig is
+  try {
+    const remote = await fbGet();
+    if (!remote) return;
+    if (remote._ts && remote._ts > lastSaveTime) {
+      state = remote;
+      delete state._ts;
+      state.players = state.players || [];
+      state.matches = state.matches || [];
+      state.bets = state.bets || [];
+      state.settings = state.settings || { startPts: 1000, maxBet: 200 };
+      renderAll();
+    }
+  } catch (e) {}
+}, 5000);
+
+// Pauzeer poll als iemand in het uitslag-formulier typt, hervat na verwerken
+document.addEventListener('focusin', e => {
+  if (e.target.id && e.target.id.startsWith('res-')) formActive = true;
+});
+
+// ─── INIT ─────────────────────────────────────────────────────────────────────
+async function load() {
+  try {
+    const remote = await fbGet();
+    if (remote && (remote.players || remote.settings)) {
+      state = remote;
+      delete state._ts;
+    }
+  } catch (e) {
+    toast('Geen Firebase verbinding, lokale data geladen', 'error');
+    const saved = localStorage.getItem('wk2026');
+    if (saved) state = JSON.parse(saved);
+  }
+  // Zorg altijd dat arrays bestaan
+  state.players = state.players || [];
+  state.matches = state.matches || [];
+  state.bets = state.bets || [];
+  state.settings = state.settings || { startPts: 1000, maxBet: 200 };
+  localStorage.setItem('wk2026', JSON.stringify(state));
+  renderAll();
+}
+
+function save() {
+  lastSaveTime = Date.now();
+  localStorage.setItem('wk2026', JSON.stringify(state));
+  const toSave = { ...state, _ts: lastSaveTime };
+  fbSet(toSave).catch(() => toast('Sync mislukt — data lokaal opgeslagen', 'error'));
+}
+
+function renderAll() {
+  renderScoreboard();
+  renderMatches();
+  renderPlayers();
+  renderResultMatches();
+  renderOddsPreview();
+  renderWinner();
+  renderDashboard();
+  renderOddsEditList();
+  renderMatchManageList();
+  // Vul winner dropdown in beheer
+  const wrd = document.getElementById('winner-result-team');
+  if (wrd && wrd.options.length <= 1) {
+    WK_TEAMS.forEach(t => {
+      const opt = document.createElement('option');
+      opt.value = t.name; opt.textContent = t.name;
+      wrd.appendChild(opt);
+    });
+  }
+  document.getElementById('cfg-startpts').value = state.settings.startPts;
+  document.getElementById('cfg-maxbet').value = state.settings.maxBet;
+  document.getElementById('cfg-apikey').value = state.settings.apiKey || '';
+}
+
+// ─── WK WINNAAR ───────────────────────────────────────────────────────────────
+const FLAGS = {
+  'Afghanistan': '🇦🇫', 'Algerije': '🇩🇿', 'Argentinie': '🇦🇷', 'Argentinië': '🇦🇷',
+  'Australie': '🇦🇺', 'Australië': '🇦🇺', 'Belgie': '🇧🇪', 'België': '🇧🇪',
+  'Brazilie': '🇧🇷', 'Brazilië': '🇧🇷', 'Canada': '🇨🇦', 'Colombia': '🇨🇴',
+  'Congo': '🇨🇩', 'Curacao': '🇨🇼', 'Curaçao': '🇨🇼', 'Denemarken': '🇩🇰',
+  'Duitsland': '🇩🇪', 'Ecuador': '🇪🇨', 'Egypte': '🇪🇬', 'Engeland': '🏴󠁧󠁢󠁥󠁮󠁧󠁿',
+  'Frankrijk': '🇫🇷', 'Ghana': '🇬🇭', 'Haiti': '🇭🇹', 'Haïti': '🇭🇹',
+  'Irak': '🇮🇶', 'Iran': '🇮🇷', 'Italie': '🇮🇹', 'Italië': '🇮🇹',
+  'Ivoorkust': '🇨🇮', 'Japan': '🇯🇵', 'Jordanie': '🇯🇴', 'Jordanië': '🇯🇴',
+  'Kaapverdie': '🇨🇻', 'Kaapverdië': '🇨🇻', 'Kroatie': '🇭🇷', 'Kroatië': '🇭🇷',
+  'Marokko': '🇲🇦', 'Mexico': '🇲🇽', 'Nederland': '🇳🇱', 'Nieuw-Zeeland': '🇳🇿',
+  'Noorwegen': '🇳🇴', 'Oezbekistan': '🇺🇿', 'Oostenrijk': '🇦🇹', 'Panama': '🇵🇦',
+  'Paraguay': '🇵🇾', 'Polen': '🇵🇱', 'Portugal': '🇵🇹', 'Qatar': '🇶🇦',
+  'Roemenie': '🇷🇴', 'Roemenië': '🇷🇴', 'Rusland': '🇷🇺', 'Saoedi-Arabie': '🇸🇦',
+  'Saoedi-Arabië': '🇸🇦', 'Schotland': '🏴󠁧󠁢󠁳󠁣󠁴󠁿', 'Senegal': '🇸🇳', 'Servie': '🇷🇸',
+  'Servië': '🇷🇸', 'Slovenie': '🇸🇮', 'Slovenië': '🇸🇮', 'Spanje': '🇪🇸',
+  'Tsjechie': '🇨🇿', 'Tsjechië': '🇨🇿', 'Tunesie': '🇹🇳', 'Tunesië': '🇹🇳',
+  'Turkije': '🇹🇷', 'Uruguay': '🇺🇾', 'VS': '🇺🇸', 'USA': '🇺🇸',
+  'Verenigde Staten': '🇺🇸', 'Wales': '🏴󠁧󠁢󠁷󠁬󠁳󠁿', 'Zuid-Afrika': '🇿🇦',
+  'Zuid-Korea': '🇰🇷', 'Zweden': '🇸🇪', 'Zwitserland': '🇨🇭',
+  'Bosnië-Herz.': '🇧🇦', 'Bosnie-Herz.': '🇧🇦', 'Bosnië': '🇧🇦', 'Bosnie': '🇧🇦',
+};
+
+function flag(name) { return FLAGS[name] ? FLAGS[name] + ' ' : ''; }
+
+const WK_TEAMS = [
+  { name: 'Spanje',      odds: 5.0  },
+  { name: 'Engeland',    odds: 6.0  },
+  { name: 'Frankrijk',   odds: 7.0  },
+  { name: 'Portugal',    odds: 8.0  },
+  { name: 'Brazilië',    odds: 9.0  },
+  { name: 'Argentinië',  odds: 10.0 },
+  { name: 'Duitsland',   odds: 15.0 },
+  { name: 'Nederland',   odds: 21.0 },
+  { name: 'Marokko',     odds: 34.0 },
+  { name: 'USA',         odds: 34.0 },
+  { name: 'Colombia',    odds: 40.0 },
+  { name: 'Uruguay',     odds: 45.0 },
+  { name: 'Mexico',      odds: 50.0 },
+  { name: 'Japan',       odds: 55.0 },
+  { name: 'Kroatië',     odds: 60.0 },
+  { name: 'Turkije',     odds: 65.0 },
+  { name: 'Ecuador',     odds: 75.0 },
+  { name: 'Senegal',     odds: 80.0 },
+  { name: 'Canada',      odds: 90.0 },
+  { name: 'Australië',   odds: 100.0 },
+  { name: 'Overig',      odds: 150.0 },
+];
+
+function renderWinner() {
+  const container = document.getElementById('winner-bet-container');
+  const placed = document.getElementById('winner-bets-placed');
+  if (!container) return;
+
+  // Sync currentUser.id op basis van naam als die nog niet gezet is
+  if (currentUser && !currentUser.id) {
+    const match = state.players.find(p => p.name.toLowerCase() === currentUser.name.toLowerCase());
+    if (match) {
+      currentUser.id = match.id;
+      localStorage.setItem('wk2026_name', JSON.stringify(currentUser));
+    }
+  }
+
+  const myBet = state.winnerBets && currentUser && currentUser.id
+    ? state.winnerBets.find(b => b.playerId === currentUser.id) : null;
+
+  if (myBet) {
+    container.innerHTML = `<div class="card" style="text-align:center; padding:2rem">
+      <div style="font-size:0.8rem; color:var(--text-muted); margin-bottom:0.5rem">Jouw voorspelling</div>
+      <div style="font-size:1.6rem; font-weight:700; color:var(--amber); margin-bottom:0.25rem">${myBet.team}</div>
+      <div style="font-size:1rem; color:var(--text-muted)">Gratis 50 pts × ${myBet.odds}x = <span style="color:var(--green-light); font-weight:600">${Math.round(50 * myBet.odds)} pts</span> bij winst</div>
+    </div>`;
+  } else if (!state.players.length) {
+    container.innerHTML = '<div class="empty-state">Voeg eerst spelers toe via Beheer.</div>';
+  } else if (!currentUser) {
+    container.innerHTML = '<div class="empty-state">Log in om een voorspelling te doen.</div>';
+  } else {
+    const player = state.players.find(p => p.name.toLowerCase() === currentUser.name.toLowerCase());
+    if (!player) {
+      container.innerHTML = '<div class="empty-state">Jouw naam staat nog niet in de spelerslijst — vraag de admin je toe te voegen.</div>';
+    } else {
+      container.innerHTML = `
+        <div class="card">
+          <div style="font-size:0.8rem; color:var(--text-muted); margin-bottom:0.25rem">Kies een land — eenmalige gratis inzet van <span style="color:var(--amber); font-weight:600">50 pts</span></div>
+          <div style="font-size:0.75rem; color:var(--text-muted); margin-bottom:1rem">Niet meer te wijzigen na inzetten</div>
+          <div style="display:grid; grid-template-columns: repeat(auto-fill, minmax(120px,1fr)); gap:0.5rem; margin-bottom:1rem" id="winner-team-grid">
+            ${WK_TEAMS.map(t => `<button class="odd-btn" onclick="selectWinnerTeam('${t.name}', this)">
+              <div style="font-size:0.85rem; font-weight:500">${t.name}</div>
+              <div class="odd-value" style="font-size:0.9rem">${t.odds}x</div>
+            </button>`).join('')}
+          </div>
+          <div style="display:flex; gap:0.75rem; align-items:center; flex-wrap:wrap">
+            <div id="winner-preview" style="font-size:0.9rem; color:var(--text-muted)"></div>
+            <button class="btn btn-amber" onclick="placeWinnerBet()">Inzetten</button>
+          </div>
+        </div>`;
+    }
+  }
+
+  // Alle inzetten tonen
+  const allBets = state.winnerBets || [];
+  if (allBets.length) {
+    placed.innerHTML = `<div class="card-title" style="margin-bottom:0.75rem">Alle inzetten</div>
+      <div class="scoreboard">` +
+      allBets.map(b => {
+        const p = state.players.find(p => p.id === b.playerId);
+        return `<div class="sb-row">
+          <div class="sb-rank"></div>
+          <div class="sb-name">${p ? p.name : '?'}</div>
+          <div class="sb-points" style="font-size:0.9rem; color:var(--text-muted)">${b.team}</div>
+          <div class="sb-change" style="color:var(--amber); min-width:80px">${b.stake} pts × ${b.odds}x</div>
+        </div>`;
+      }).join('') + '</div>';
+  } else {
+    placed.innerHTML = '';
+  }
+}
+
+let selectedWinnerTeam = null;
+
+function selectWinnerTeam(name, btn) {
+  document.querySelectorAll('#winner-team-grid .odd-btn').forEach(b => b.classList.remove('selected'));
+  btn.classList.add('selected');
+  selectedWinnerTeam = name;
+  updateWinnerPreview();
+}
+
+function updateWinnerPreview() {
+  const el = document.getElementById('winner-preview');
+  if (!el) return;
+  if (!selectedWinnerTeam) { el.textContent = ''; return; }
+  const team = WK_TEAMS.find(t => t.name === selectedWinnerTeam);
+  el.innerHTML = `50 pts × ${team.odds}x → <span style="color:var(--green-light); font-weight:600">${Math.round(50 * team.odds)} pts</span> bij winst`;
+}
+
+function placeWinnerBet() {
+  if (!currentUser || !currentUser.id) return toast('Stel eerst je naam in', 'error');
+  if (!selectedWinnerTeam) return toast('Kies een land', 'error');
+
+  const player = state.players.find(p => p.id === currentUser.id);
+  if (!player) return toast('Speler niet gevonden', 'error');
+
+  if (!state.winnerBets) state.winnerBets = [];
+  if (state.winnerBets.find(b => b.playerId === currentUser.id))
+    return toast('Je hebt al ingezet op de WK winnaar', 'error');
+
+  const team = WK_TEAMS.find(t => t.name === selectedWinnerTeam);
+  const stake = 50;
+  state.winnerBets.push({ playerId: currentUser.id, team: selectedWinnerTeam, stake, odds: team.odds });
+
+  save();
+  renderAll();
+  toast(`${player.name} voorspelt ${selectedWinnerTeam} — gratis 50 pts ingezet!`, 'success');
+}
+
+// ─── NAVIGATION ───────────────────────────────────────────────────────────────
+function showPage(id) {
+  if ((id === 'beheer' || id === 'kladblok') && (!currentUser || currentUser.name !== 'Gijs')) {
+    toast('Alleen de admin heeft toegang tot deze pagina', 'error');
+    return;
+  }
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.getElementById('page-' + id).classList.add('active');
+  document.querySelectorAll('nav button').forEach(b => b.classList.remove('active'));
+  const pages = ['dashboard', 'ranglijst', 'winnaar', 'wedstrijden', 'kladblok', 'beheer'];
+  const idx = pages.indexOf(id);
+  if (idx >= 0) document.querySelectorAll('nav button')[idx].classList.add('active');
+  if (id === 'dashboard') renderDashboard();
+  if (id === 'ranglijst') renderChart();
+  if (id === 'kladblok') renderKladblok();
+  if (id !== 'beheer') formActive = false;
+}
+
+// ─── SETTINGS ─────────────────────────────────────────────────────────────────
+function saveSettings() {
+  state.settings.startPts = parseInt(document.getElementById('cfg-startpts').value) || 1000;
+  state.settings.maxBet = parseInt(document.getElementById('cfg-maxbet').value) || 200;
+  save();
+  toast('Instellingen opgeslagen', 'success');
+}
+
+function saveApiKey() {
+  const key = document.getElementById('cfg-apikey').value.trim();
+  if (!key) return toast('Voer een API key in', 'error');
+  state.settings.apiKey = key;
+  save();
+  toast('API key opgeslagen', 'success');
+}
+
+// ─── API ──────────────────────────────────────────────────────────────────────
+const API_BASE = 'https://api.football-data.org/v4';
+const WK_ID = 2000; // football-data.org competition ID voor FIFA World Cup
+
+function apiStatus(msg, type = '') {
+  const el = document.getElementById('api-status');
+  el.textContent = msg;
+  el.style.color = type === 'error' ? 'var(--danger)' : type === 'ok' ? 'var(--green-light)' : 'var(--text-muted)';
+}
+
+async function apiFetch(path) {
+  const key = state.settings.apiKey;
+  if (!key) { toast('Sla eerst een API key op', 'error'); return null; }
+  const res = await fetch(`${API_BASE}${path}`, {
+    headers: { 'X-Auth-Token': key }
+  });
+  if (!res.ok) {
+    const err = await res.json().catch(() => ({}));
+    throw new Error(err.message || `HTTP ${res.status}`);
+  }
+  return res.json();
+}
+
+function phaseFromStage(stage) {
+  if (!stage) return 'group';
+  const s = stage.toUpperCase();
+  if (s.includes('GROUP')) return 'group';
+  if (s.includes('FINAL') && !s.includes('SEMI') && !s.includes('QUARTER')) return 'final';
+  return 'knockout';
+}
+
+function formatDate(utcDate) {
+  if (!utcDate) return '';
+  const d = new Date(utcDate);
+  return d.toLocaleDateString('nl-NL', { day: 'numeric', month: 'short' })
+    + ' ' + d.toLocaleTimeString('nl-NL', { hour: '2-digit', minute: '2-digit' });
+}
+
+async function fetchMatches() {
+  apiStatus('Wedstrijden ophalen...');
+  try {
+    const data = await apiFetch(`/competitions/${WK_ID}/matches?status=SCHEDULED,TIMED,IN_PLAY`);
+    if (!data) return;
+    let added = 0;
+    for (const m of data.matches) {
+      const home = m.homeTeam.name;
+      const away = m.awayTeam.name;
+      const alreadyExists = state.matches.find(
+        x => x.home === home && x.away === away
+      );
+      if (alreadyExists) continue;
+      state.matches.push({
+        id: m.id,
+        apiId: m.id,
+        home, away,
+        date: formatDate(m.utcDate),
+        phase: phaseFromStage(m.stage),
+        probs: { h: 45, d: 28, a: 27 }, // default, handmatig aanpasbaar
+        status: 'open',
+        result: null
+      });
+      added++;
+    }
+    save();
+    renderAll();
+    apiStatus(`${added} nieuwe wedstrijden toegevoegd (${data.matches.length} totaal gevonden)`, 'ok');
+    if (added > 0) toast(`${added} wedstrijden toegevoegd`, 'success');
+    else toast('Geen nieuwe wedstrijden', 'success');
+  } catch (e) {
+    apiStatus('Fout: ' + e.message, 'error');
+    toast('API fout: ' + e.message, 'error');
+  }
+}
+
+async function fetchResults() {
+  apiStatus('Uitslagen ophalen...');
+  try {
+    const data = await apiFetch(`/competitions/${WK_ID}/matches?status=FINISHED`);
+    if (!data) return;
+    let updated = 0;
+    for (const apiMatch of data.matches) {
+      const m = state.matches.find(x => x.apiId === apiMatch.id);
+      if (!m || m.status === 'done') continue;
+      const hg = apiMatch.score?.fullTime?.home;
+      const ag = apiMatch.score?.fullTime?.away;
+      if (hg == null || ag == null) continue;
+
+      const outcome = hg > ag ? 'h' : hg < ag ? 'a' : 'd';
+      m.result = { homeGoals: hg, awayGoals: ag, outcome };
+      m.status = 'done';
+
+      // Uitbetalen
+      state.bets.filter(b => b.matchId === m.id).forEach(b => {
+        if (didWin(b, m)) {
+          const player = state.players.find(p => p.id === b.playerId);
+          if (player) player.points += Math.round(b.stake * b.odds);
+        }
+      });
+      updated++;
+    }
+    save();
+    renderAll();
+    apiStatus(`${updated} wedstrijden bijgewerkt`, 'ok');
+    if (updated > 0) toast(`${updated} uitslagen verwerkt`, 'success');
+    else toast('Geen nieuwe uitslagen', 'success');
+  } catch (e) {
+    apiStatus('Fout: ' + e.message, 'error');
+    toast('API fout: ' + e.message, 'error');
+  }
+}
+
+// ─── PLAYERS ──────────────────────────────────────────────────────────────────
+function addPlayer() {
+  const name = document.getElementById('new-player-name').value.trim();
+  if (!name) return toast('Voer een naam in', 'error');
+  if (state.players.find(p => p.name.toLowerCase() === name.toLowerCase()))
+    return toast('Naam bestaat al', 'error');
+  state.players.push({ id: Date.now(), name, points: state.settings.startPts });
+  document.getElementById('new-player-name').value = '';
+  save();
+  renderAll();
+  toast(name + ' toegevoegd', 'success');
+}
+
+function removePlayer(id) {
+  if (!confirm('Speler verwijderen?')) return;
+  state.players = state.players.filter(p => p.id !== id);
+  state.bets = state.bets.filter(b => b.playerId !== id);
+  save();
+  renderAll();
+}
+
+function renderPlayers() {
+  const el = document.getElementById('player-list');
+  if (!state.players.length) {
+    el.innerHTML = '<div style="color:var(--text-muted); font-size:0.85rem; margin-bottom:0.75rem">Nog geen spelers.</div>';
+    return;
+  }
+  el.innerHTML = '<div class="player-list">' + state.players.map(p =>
+    `<div class="player-chip">
+      <span>${p.name}</span>
+      <span class="pts">${p.points} pts</span>
+      <button onclick="openPlayerEdit(${p.id})" title="Punten aanpassen" style="background:none; border:none; color:var(--text-muted); cursor:pointer; font-size:0.85rem; padding:0">✎</button>
+      <button onclick="removePlayer(${p.id})" title="Verwijderen">×</button>
+    </div>`
+  ).join('') + '</div>';
+}
+
+// ─── MATCHES ──────────────────────────────────────────────────────────────────
+function addMatch() {
+  const home = document.getElementById('m-home').value.trim();
+  const away = document.getElementById('m-away').value.trim();
+  const date = document.getElementById('m-date').value.trim();
+  const phase = document.getElementById('m-phase').value;
+  const ph = parseFloat(document.getElementById('m-ph').value);
+  const pd = parseFloat(document.getElementById('m-pd').value);
+  const pa = parseFloat(document.getElementById('m-pa').value);
+  if (!home || !away) return toast('Voer beide teams in', 'error');
+  if (Math.abs(ph + pd + pa - 100) > 0.1) return toast('Kansen moeten optellen tot 100%', 'error');
+
+  state.matches.push({
+    id: Date.now(),
+    home, away, date, phase,
+    probs: { h: ph, d: pd, a: pa },
+    status: 'open', // open | closed | done
+    result: null // { homeGoals, awayGoals, outcome: 'h'|'d'|'a' }
+  });
+
+  ['m-home','m-away','m-date'].forEach(id => document.getElementById(id).value = '');
+  document.getElementById('m-ph').value = 45;
+  document.getElementById('m-pd').value = 30;
+  document.getElementById('m-pa').value = 25;
+  save();
+  renderAll();
+  toast('Wedstrijd toegevoegd', 'success');
+}
+
+function renderOddsPreview() {
+  const ph = parseFloat(document.getElementById('m-ph').value) || 0;
+  const pd = parseFloat(document.getElementById('m-pd').value) || 0;
+  const pa = parseFloat(document.getElementById('m-pa').value) || 0;
+  const total = ph + pd + pa;
+  const el = document.getElementById('odds-preview');
+  if (Math.abs(total - 100) < 0.1) {
+    el.textContent = `Odds: thuis ${(100/ph).toFixed(2)}x · gelijk ${(100/pd).toFixed(2)}x · uit ${(100/pa).toFixed(2)}x`;
+    el.style.color = 'var(--green-light)';
+  } else {
+    el.textContent = `Totaal: ${total}% (moet 100% zijn)`;
+    el.style.color = 'var(--danger)';
+  }
+}
+
+['m-ph','m-pd','m-pa'].forEach(id =>
+  document.getElementById(id).addEventListener('input', renderOddsPreview));
+
+let currentFilter = 'all';
+
+function filterMatches(f, btn) {
+  currentFilter = f;
+  document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  renderMatches();
+}
+
+function renderMatches() {
+  const el = document.getElementById('matches-container');
+  const statusOrder = { closed: 0, open: 1, done: 2 };
+  let matches = [...state.matches].sort((a, b) => {
+    const sd = statusOrder[a.status] - statusOrder[b.status];
+    if (sd !== 0) return sd;
+    const da = parseMatchDate(a.date), db = parseMatchDate(b.date);
+    if (!da && !db) return 0;
+    if (!da) return 1;
+    if (!db) return -1;
+    // open: vroegste eerst, closed/done: nieuwste eerst
+    return a.status === 'open' ? da - db : db - da;
+  });
+  if (currentFilter !== 'all') matches = matches.filter(m => m.status === currentFilter);
+  if (!matches.length) {
+    el.innerHTML = '<div class="empty-state">Geen wedstrijden gevonden.<br>Voeg ze toe via Beheer.</div>';
+    return;
+  }
+  el.innerHTML = matches.map(m => buildMatchCard(m)).join('');
+  updateCountdowns();
+
+  // Herstel uitgeklapte kaarten
+  expandedMatches.forEach(matchId => {
+    const othersEl = document.getElementById(`others-${matchId}`);
+    const btn = othersEl && othersEl.nextElementSibling;
+    if (othersEl) {
+      othersEl.style.display = 'block';
+      if (btn) btn.textContent = 'Minder lezen';
+    }
+  });
+}
+
+function buildMatchCard(m) {
+  const odds = getOdds(m);
+  const matchBets = state.bets.filter(b => b.matchId === m.id);
+  const statusLabel = { open: 'Open', closed: 'Gesloten', done: 'Afgerond' }[m.status];
+  const statusClass = { open: 'status-open', closed: 'status-closed', done: 'status-done' }[m.status];
+  const phaseTag = { group: 'tag-group', r16: 'tag-knockout', r8: 'tag-knockout', qf: 'tag-knockout', sf: 'tag-knockout', third: 'tag-knockout', final: 'tag-final', knockout: 'tag-knockout' }[m.phase] || 'tag-knockout';
+  const phaseLabel = { group: 'Groepsfase', r16: '16e finale', r8: '8e finale', qf: 'Kwartfinale', sf: 'Halve finale', third: 'Troostfinale', final: 'Finale', knockout: 'Knockout' }[m.phase] || m.phase;
+
+  let resultHtml = '';
+  if (m.status === 'done' && m.result) {
+    resultHtml = `<div style="text-align:center; font-size:1.6rem; font-weight:700; color:var(--amber); margin:0.5rem 0">
+      ${m.result.homeGoals} – ${m.result.awayGoals}
+    </div>`;
+  }
+
+  let betsHtml = '';
+  if (matchBets.length) {
+    const myBets = matchBets.filter(b => currentUser && b.playerId === currentUser.id);
+    const otherBets = matchBets.filter(b => !currentUser || b.playerId !== currentUser.id);
+    const hasCancel = m.status === 'open' && myBets.length > 0 && !m.oddsUpdatedAt;
+
+    const renderBetRow = (b, showCancel) => {
+      const player = state.players.find(p => p.id === b.playerId);
+      const name = player ? player.name : '?';
+      const isOwn = currentUser && b.playerId === currentUser.id;
+      let payoutHtml = '';
+      if (m.status === 'done') {
+        const won = didWin(b, m);
+        const payout = won ? Math.round(b.stake * b.odds) : 0;
+        payoutHtml = won
+          ? `<span class="bet-payout won">+${payout} pts</span>`
+          : `<span class="bet-payout lost">-${b.stake} pts</span>`;
+      } else {
+        payoutHtml = `<span class="bet-payout" style="color:var(--text-muted)">x ${b.odds.toFixed(2)}</span>`;
+      }
+      const showCancelBtn = showCancel && !m.oddsUpdatedAt && m.status === 'open' && isOwn;
+      const cancelCell = showCancelBtn
+        ? `<span class="bet-cancel"><button class="btn btn-danger" style="padding:0.2rem 0.5rem; font-size:0.72rem" onclick="cancelBet(${b.id})">Annuleer</button></span>`
+        : '';
+      return `<div class="bet-row">
+        <span class="bet-player">${name}</span>
+        <span class="bet-prediction">${betLabel(b, m)}</span>
+        ${cancelCell}
+        <span class="bet-amount">${b.stake} pts</span>
+        ${payoutHtml}
+      </div>`;
+    };
+
+    // Heeft iemand in myBets een actieve annuleer knop?
+    const anyCancel = hasCancel && !m.oddsUpdatedAt && m.status === 'open';
+    const myBetsHtml = myBets.length
+      ? `<div class="bets-table${anyCancel ? '' : ' no-cancel'}">${myBets.map(b => renderBetRow(b, true)).join('')}</div>`
+      : '';
+
+    const otherBetsHtml = otherBets.length
+      ? `<div id="others-${m.id}" style="display:none">
+           <div class="bets-table no-cancel">${otherBets.map(b => renderBetRow(b, false)).join('')}</div>
+         </div>
+         <button class="btn btn-ghost" style="font-size:0.75rem; padding:0.25rem 0.6rem; margin-top:0.4rem" onclick="toggleOtherBets(${m.id}, this)">
+           Meer lezen (${otherBets.length})
+         </button>`
+      : '';
+
+    betsHtml = `<div class="bets-section">
+      <div style="font-size:0.75rem; color:var(--text-muted); margin-bottom:0.5rem; font-weight:600; text-transform:uppercase; letter-spacing:0.06em">Inzetten (${matchBets.length})</div>
+      ${myBetsHtml}
+      ${otherBetsHtml}
+    </div>`;
+  }
+
+  const canBet = m.status === 'open' && state.players.length > 0;
+
+  return `<div class="match-card">
+    <div class="match-header">
+      <div>
+        <span class="match-teams">${flag(m.home)}${m.home} – ${flag(m.away)}${m.away}</span>
+        <div class="match-meta">
+          <span class="tag ${phaseTag}">${phaseLabel}</span>
+          ${m.date ? ` · ${m.date}` : ''}
+          ${m.status === 'open' && m.date ? `<span class="countdown" data-date="${m.date}" style="margin-left:0.5rem; color:var(--amber); font-weight:600"></span>` : ''}
+        </div>
+      </div>
+      <span class="match-status ${statusClass}">${statusLabel}</span>
+    </div>
+    <div class="odds-row">
+      <div class="odd-btn" style="cursor:default">
+        <div class="odd-label">${m.phase !== 'group' ? m.home + ' (90 min)' : m.home + ' wint'}</div>
+        <div class="odd-value">${(100/m.probs.h).toFixed(2)}x</div>
+      </div>
+      <div class="odd-btn" style="cursor:default">
+        <div class="odd-label">${m.phase === 'group' ? 'Gelijk' : 'Verlenging'}</div>
+        <div class="odd-value">${(100/m.probs.d).toFixed(2)}x</div>
+      </div>
+      <div class="odd-btn" style="cursor:default">
+        <div class="odd-label">${m.phase !== 'group' ? m.away + ' (90 min)' : m.away + ' wint'}</div>
+        <div class="odd-value">${(100/m.probs.a).toFixed(2)}x</div>
+      </div>
+    </div>
+    ${resultHtml}
+    ${betsHtml}
+    ${canBet ? `<button class="btn btn-amber" style="margin-top:0.75rem; width:100%" onclick="openBetModal(${m.id})">Inzetten</button>` : ''}
+  </div>`;
+}
+
+function getOdds(m) {
+  return {
+    h: 100 / m.probs.h,
+    d: 100 / m.probs.d,
+    a: 100 / m.probs.a
+  };
+}
+
+// ─── ADMIN: UITSLAG ───────────────────────────────────────────────────────────
+function renderResultMatches() {
+  const el = document.getElementById('result-matches-list');
+  if (!el) return;
+  const open = state.matches
+    .filter(m => m.status !== 'done')
+    .sort((a, b) => {
+      const da = parseMatchDate(a.date), db = parseMatchDate(b.date);
+      if (!da && !db) return 0;
+      if (!da) return 1;
+      if (!db) return -1;
+      return db - da;
+    });
+  if (!open.length) {
+    el.innerHTML = '<div style="color:var(--text-muted); font-size:0.85rem">Geen open wedstrijden.</div>';
+    return;
+  }
+  el.innerHTML = open.map(m => `
+    <div style="display:flex; align-items:center; justify-content:space-between; padding:0.6rem 0; border-bottom:1px solid var(--border); gap:0.75rem; flex-wrap:wrap">
+      <div style="font-size:0.9rem; font-weight:500">${m.home} – ${m.away}</div>
+      <div style="display:flex; gap:0.5rem; align-items:center; flex-wrap:wrap">
+        ${m.status === 'open'
+          ? `<button class="btn btn-ghost" style="font-size:0.78rem; padding:0.3rem 0.7rem" onclick="toggleMatchStatus(${m.id})">Sluiten voor inzetten</button>`
+          : `<span style="font-size:0.78rem; color:var(--amber)">Gesloten</span>`
+        }
+        <input type="number" id="res-h-${m.id}" placeholder="${m.home} goals" min="0" max="20" style="width:100px; margin:0">
+        <input type="number" id="res-a-${m.id}" placeholder="${m.away} goals" min="0" max="20" style="width:100px; margin:0">
+        <input type="number" id="res-hth-${m.id}" placeholder="Rust ${m.home}" min="0" max="20" style="width:100px; margin:0" title="Ruststand thuisteam">
+        <input type="number" id="res-hta-${m.id}" placeholder="Rust ${m.away}" min="0" max="20" style="width:100px; margin:0" title="Ruststand uitteam">
+        <input type="number" id="res-yc-${m.id}" placeholder="Gele kaarten" min="0" max="20" style="width:110px; margin:0" title="Totaal gele kaarten">
+        <input type="number" id="res-rc-${m.id}" placeholder="Rode kaarten" min="0" max="10" style="width:110px; margin:0" title="Totaal rode kaarten">
+        <select id="res-pen-${m.id}" style="margin:0; width:90px" title="Penalty?">
+          <option value="">Pen?</option>
+          <option value="1">Ja</option>
+          <option value="0">Nee</option>
+        </select>
+        <select id="res-et-${m.id}" style="margin:0; width:100px" title="Verlenging?">
+          <option value="">Verl?</option>
+          <option value="1">Ja</option>
+          <option value="0">Nee</option>
+        </select>
+        <button class="btn btn-primary" style="font-size:0.78rem; padding:0.3rem 0.8rem" onclick="submitResult(${m.id})">Verwerken</button>
+      </div>
+      ${(m.customBets || []).length ? `<div style="margin-top:0.5rem; padding-top:0.5rem; border-top:1px solid var(--border)">
+        <div style="font-size:0.75rem; color:var(--text-muted); margin-bottom:0.4rem">Speciale inzetten</div>
+        ${(m.customBets || []).map(c => `
+          <div style="display:flex; align-items:center; gap:0.5rem; margin-bottom:0.35rem; font-size:0.85rem">
+            <span style="flex:1">${c.label}</span>
+            <select id="custom-res-${m.id}-${c.id}" style="margin:0; width:80px">
+              <option value="">?</option>
+              <option value="1">Ja</option>
+              <option value="0">Nee</option>
+            </select>
+          </div>`).join('')}
+      </div>` : ''}
+    </div>`).join('');
+}
+
+function toggleMatchStatus(id) {
+  const m = state.matches.find(m => m.id == id);
+  if (m && m.status === 'open') m.status = 'closed';
+  save();
+  renderAll();
+}
+
+function submitResult(id) {
+  const m = state.matches.find(m => m.id == id);
+  const hg = parseInt(document.getElementById(`res-h-${id}`).value);
+  const ag = parseInt(document.getElementById(`res-a-${id}`).value);
+  if (isNaN(hg) || isNaN(ag)) return toast('Voer beide scores in', 'error');
+
+  const outcome = hg > ag ? 'h' : hg < ag ? 'a' : 'd';
+  const yc  = document.getElementById(`res-yc-${id}`).value;
+  const rc  = document.getElementById(`res-rc-${id}`).value;
+  const pen = document.getElementById(`res-pen-${id}`).value;
+  const et  = document.getElementById(`res-et-${id}`).value;
+  const hth = document.getElementById(`res-hth-${id}`).value;
+  const hta = document.getElementById(`res-hta-${id}`).value;
+
+  // Custom bet resultaten
+  const customResults = {};
+  (m.customBets || []).forEach(c => {
+    const el = document.getElementById(`custom-res-${id}-${c.id}`);
+    if (el && el.value !== '') customResults[c.id] = el.value === '1';
+  });
+
+  m.result = {
+    homeGoals: hg, awayGoals: ag, outcome,
+    htHome:      hth !== '' ? parseInt(hth) : null,
+    htAway:      hta !== '' ? parseInt(hta) : null,
+    yellowCards: yc  !== '' ? parseInt(yc)  : null,
+    redCards:    rc  !== '' ? parseInt(rc)   : null,
+    penalty:     pen !== '' ? pen === '1'    : null,
+    extraTime:   et  !== '' ? et  === '1'    : null,
+    customResults,
+  };
+  m.status = 'done';
+
+  // Uitbetalen
+  state.bets.filter(b => b.matchId === id).forEach(b => {
+    if (didWin(b, m)) {
+      const player = state.players.find(p => p.id === b.playerId);
+      if (player) player.points += Math.round(b.stake * b.odds);
+    }
+  });
+
+  save();
+  renderAll();
+  formActive = false;
+  toast(`Uitslag verwerkt: ${m.home} ${hg}–${ag} ${m.away}`, 'success');
+}
+
+function didWin(bet, match) {
+  if (!match.result) return false;
+  const r = match.result;
+  const total = r.homeGoals + r.awayGoals;
+
+  if (bet.type === '1x2') {
+    if (match.phase !== 'group') {
+      if (bet.outcome === 'd') return r.extraTime === true;
+      // thuis/uit wint na 90 min: alleen als er geen verlenging was
+      if (r.extraTime === true) return false;
+    }
+    return bet.outcome === r.outcome;
+  }
+  if (bet.type === 'score') return bet.homeGoals === r.homeGoals && bet.awayGoals === r.awayGoals;
+  if (bet.type === 'final') {
+    if (bet.outcome === 'fh') return r.outcome === 'h';
+    if (bet.outcome === 'fa') return r.outcome === 'a';
+  }
+  if (bet.type === 'custom') {
+    if (!r.customResults) return null;
+    const res = r.customResults[bet.customId];
+    return res != null ? res === true : null;
+  }
+  if (bet.type === 'extra') {
+    if (bet.market === 'btts')      return r.homeGoals > 0 && r.awayGoals > 0;
+    if (bet.market === 'over25')    return total > 2.5;
+    if (bet.market === 'under25')   return total < 2.5;
+    if (bet.market === 'over35')    return total > 3.5;
+    if (bet.market === 'under15')   return total < 1.5;
+    if (bet.market === 'nogoal')    return r.homeGoals === 0 && r.awayGoals === 0;
+    if (bet.market === 'homeClean') return r.awayGoals === 0;
+    if (bet.market === 'awayClean') return r.homeGoals === 0;
+    if (bet.market === 'ht_home')   return r.htHome != null ? r.htHome > r.htAway : null;
+    if (bet.market === 'ht_draw')   return r.htHome != null ? r.htHome === r.htAway : null;
+    if (bet.market === 'ht_away')   return r.htHome != null ? r.htAway > r.htHome : null;
+    if (bet.market === 'yc_over2')  return r.yellowCards != null ? r.yellowCards > 2 : null;
+    if (bet.market === 'yc_over4')  return r.yellowCards != null ? r.yellowCards > 4 : null;
+    if (bet.market === 'rc_yes')    return r.redCards != null ? r.redCards > 0 : null;
+    if (bet.market === 'pen_yes')   return r.penalty != null ? r.penalty : null;
+    if (bet.market === 'shootout')  return r.shootout != null ? r.shootout : null;
+    if (bet.market === 'et_yes')    return r.extraTime != null ? r.extraTime : null;
+  }
+  return false;
+}
+
+function betLabel(bet, match) {
+  if (bet.type === '1x2') {
+    const suffix = match.phase !== 'group' ? ' (90 min)' : '';
+    const labels = { h: match.home + ' wint' + suffix, d: match.phase === 'group' ? 'Gelijk' : 'Verlenging', a: match.away + ' wint' + suffix };
+    return labels[bet.outcome] || bet.outcome;
+  }
+  if (bet.type === 'score') return `${bet.homeGoals}–${bet.awayGoals}`;
+  if (bet.type === 'final') {
+    return (bet.outcome === 'fh' ? match.home : match.away) + ' wint (einduitslag)';
+  }
+  if (bet.type === 'custom') {
+    const cb = (match.customBets || []).find(c => c.id === bet.customId);
+    return cb ? cb.label : bet.customId;
+  }
+  if (bet.type === 'extra') {
+    const labels = {
+      btts: 'Beide scoren', over25: 'Over 2.5', under25: 'Onder 2.5',
+      over35: 'Over 3.5', under15: 'Onder 1.5', nogoal: '0-0',
+      homeClean: match.home + ' clean sheet', awayClean: match.away + ' clean sheet',
+      ht_home: match.home + ' leidt rust', ht_draw: 'Rust gelijk', ht_away: match.away + ' leidt rust',
+      yc_over2: '>2 gele kaarten', yc_over4: '>4 gele kaarten',
+      rc_yes: 'Rode kaart', pen_yes: 'Penalty', shootout: 'Strafschoppen', et_yes: 'Verlenging'
+    };
+    return labels[bet.market] || bet.market;
+  }
+  return '?';
+}
+
+// ─── BET MODAL ────────────────────────────────────────────────────────────────
+function openBetModal(matchId) {
+  currentMatchId = matchId;
+  currentBetType = '1x2';
+  selectedOutcome = null;
+  const m = state.matches.find(m => m.id == matchId);
+
+  document.getElementById('modal-match-title').textContent = `${flag(m.home)}${m.home} – ${flag(m.away)}${m.away}`;
+  document.getElementById('modal-match-sub').textContent = m.date || m.phase;
+  const alreadyStaked = state.bets
+    .filter(b => b.matchId === matchId && b.playerId === (currentUser && currentUser.id))
+    .reduce((sum, b) => sum + b.stake, 0);
+  const remaining = state.settings.maxBet - alreadyStaked;
+  document.getElementById('modal-max').textContent =
+    alreadyStaked > 0 ? `${remaining} pts resterend (${alreadyStaked} al ingezet)` : `${state.settings.maxBet} pts`;
+  document.getElementById('modal-stake').value = '';
+  document.getElementById('payout-preview-val').textContent = '—';
+
+  // Toon vaste naam — geen dropdown
+  const player = state.players.find(p =>
+    currentUser && p.name.toLowerCase() === currentUser.name.toLowerCase());
+  if (!player) {
+    toast('Jouw naam staat niet in de spelerslijst — vraag de admin je toe te voegen', 'error');
+    return;
+  }
+  currentUser.id = player.id;
+  localStorage.setItem('wk2026_name', JSON.stringify(currentUser));
+  document.getElementById('modal-playername').textContent = `${player.name} · ${player.points} pts`;
+
+  // 1X2 odds
+  const odds = getOdds(m);
+  document.getElementById('modal-odds-row').innerHTML = [
+    { key: 'h', label: flag(m.home) + m.home + (m.phase !== 'group' ? ' wint (90 min)' : ' wint'), val: odds.h },
+    { key: 'd', label: m.phase === 'group' ? 'Gelijk' : 'Verlenging', val: odds.d },
+    { key: 'a', label: flag(m.away) + m.away + (m.phase !== 'group' ? ' wint (90 min)' : ' wint'), val: odds.a }
+  ].map(o => `<button class="odd-btn" onclick="selectOutcome1x2('${o.key}', this)">
+    <div class="odd-label">${o.label}</div>
+    <div class="odd-value">${o.val.toFixed(2)}x</div>
+  </button>`).join('');
+
+  // Einduitslag (alleen knockout)
+  const finalSection = document.getElementById('modal-final-result');
+  if (m.phase !== 'group') {
+    finalSection.style.display = 'block';
+    // Einduitslag odds iets lager dan 1X2 (geen gelijk mogelijk, dus kansen herschalen)
+    const totalHA = m.probs.h + m.probs.a;
+    const oddsH = +(100 / (m.probs.h / totalHA * 100)).toFixed(2);
+    const oddsA = +(100 / (m.probs.a / totalHA * 100)).toFixed(2);
+    document.getElementById('modal-final-row').innerHTML = [
+      { key: 'fh', label: flag(m.home) + m.home + ' wint', val: oddsH },
+      { key: 'fa', label: flag(m.away) + m.away + ' wint', val: oddsA }
+    ].map(o => `<button class="odd-btn" onclick="selectFinalResult('${o.key}', ${o.val}, this)">
+      <div class="odd-label">${o.label}</div>
+      <div class="odd-value">${o.val}x</div>
+    </button>`).join('');
+  } else {
+    finalSection.style.display = 'none';
+  }
+
+  // Score grid
+  buildScoreGrid();
+
+  // Extra
+  buildExtraOptions(m);
+
+  // Custom
+  buildCustomOptions(m);
+
+  // Show correct tab
+  setBetType('1x2', document.querySelector('.bet-tab'));
+  document.querySelectorAll('.bet-tab').forEach((t, i) => t.classList.toggle('active', i === 0));
+
+  document.getElementById('bet-overlay').classList.add('open');
+}
+
+function closeModal() {
+  document.getElementById('bet-overlay').classList.remove('open');
+}
+
+function setBetType(type, btn) {
+  currentBetType = type;
+  selectedOutcome = null;
+  document.getElementById('bet-1x2').style.display = type === '1x2' ? 'block' : 'none';
+  document.getElementById('bet-score').style.display = type === 'score' ? 'block' : 'none';
+  document.getElementById('bet-extra').style.display = type === 'extra' ? 'block' : 'none';
+  document.getElementById('bet-custom').style.display = type === 'custom' ? 'block' : 'none';
+  document.querySelectorAll('.bet-tab').forEach(t => t.classList.remove('active'));
+  btn.classList.add('active');
+  updatePayoutPreview();
+}
+
+function selectFinalResult(key, odds, btn) {
+  document.querySelectorAll('#modal-odds-row .odd-btn, #modal-final-row .odd-btn').forEach(b => b.classList.remove('selected'));
+  btn.classList.add('selected');
+  selectedOutcome = { type: 'final', outcome: key, odds };
+  updatePayoutPreview();
+}
+
+function selectOutcome1x2(key, btn) {
+  document.querySelectorAll('#modal-odds-row .odd-btn, #modal-final-row .odd-btn').forEach(b => b.classList.remove('selected'));
+  btn.classList.add('selected');
+  selectedOutcome = { type: '1x2', outcome: key };
+  const m = state.matches.find(m => m.id === currentMatchId);
+  selectedOutcome.odds = 100 / m.probs[key];
+  updatePayoutPreview();
+}
+
+function buildScoreGrid() {
+  const m = state.matches.find(m => m.id === currentMatchId);
+  const scores = [];
+  for (let h = 0; h <= 4; h++)
+    for (let a = 0; a <= 4; a++)
+      scores.push({ h, a });
+
+  // Rough score odds: base odds * distance factor
+  const grid = document.getElementById('score-grid');
+  grid.innerHTML = scores.map(s => {
+    const totalGoals = s.h + s.a;
+    const expGoals = 2.5;
+    const factor = Math.max(1.5, totalGoals === 0 ? 8 : totalGoals * 1.8 + Math.abs(s.h - s.a) * 0.5 + 2);
+    const baseOdds = s.h > s.a ? 100/m.probs.h : s.h < s.a ? 100/m.probs.a : 100/m.probs.d;
+    const scoreOdds = +(baseOdds * factor).toFixed(1);
+    return `<button class="score-btn" onclick="selectScore(${s.h}, ${s.a}, ${scoreOdds}, this)">
+      ${s.h}–${s.a}<br><span style="font-size:0.65rem; color:var(--amber)">${scoreOdds}x</span>
+    </button>`;
+  }).join('');
+}
+
+function selectScore(h, a, odds, btn) {
+  document.querySelectorAll('.score-btn').forEach(b => b.classList.remove('selected'));
+  btn.classList.add('selected');
+  selectedOutcome = { type: 'score', homeGoals: h, awayGoals: a, odds };
+  updatePayoutPreview();
+}
+
+function buildExtraOptions(m) {
+  // Schat verwacht aantal doelpunten per team via winkansen
+  // Sterke favoriet scoort meer, zwakkere minder
+  const ph = m.probs.h / 100;
+  const pd = m.probs.d / 100;
+  const pa = m.probs.a / 100;
+
+  // Gemiddeld verwacht doelpunten per team afleiden uit kansen
+  // Favoriet scoort meer: schaal tussen 0.8 en 1.8 goals
+  const lambdaH = 0.8 + (ph - pa + 0.5) * 1.0; // thuis verwacht
+  const lambdaA = 0.8 + (pa - ph + 0.5) * 1.0; // uit verwacht
+
+  // Poisson kans: P(X=k) = e^-lambda * lambda^k / k!
+  function poisson(lambda, k) {
+    let p = Math.exp(-lambda);
+    for (let i = 0; i < k; i++) p *= lambda / (i + 1);
+    return p;
+  }
+
+  // P(totaal goals > n) via Poisson convolutie (max 10 goals)
+  function pOver(n) {
+    let pUnder = 0;
+    for (let h = 0; h <= 10; h++)
+      for (let a = 0; a <= 10; a++)
+        if (h + a <= n) pUnder += poisson(lambdaH, h) * poisson(lambdaA, a);
+    return Math.max(0.02, Math.min(0.98, 1 - pUnder));
+  }
+
+  // P(beide teams scoren)
+  function pBTTS() {
+    const pHScores = 1 - poisson(lambdaH, 0);
+    const pAScores = 1 - poisson(lambdaA, 0);
+    return Math.max(0.02, Math.min(0.98, pHScores * pAScores));
+  }
+
+  // P(clean sheet thuis = uit scoort 0)
+  const pHomeClean = Math.max(0.02, Math.min(0.98, poisson(lambdaA, 0)));
+  const pAwayClean = Math.max(0.02, Math.min(0.98, poisson(lambdaH, 0)));
+
+  // Rust odds: halftime kansen ruwweg via dezelfde verhouding maar minder doelpunten
+  const lambdaHH = lambdaH * 0.45;
+  const lambdaHA = lambdaA * 0.45;
+  const pHtH = Math.max(0.02, Math.min(0.98, ph + 0.05)); // iets gecorrigeerd
+  const pHtD = Math.max(0.02, Math.min(0.98, pd + 0.10));
+  const pHtA = Math.max(0.02, Math.min(0.98, pa + 0.05));
+
+  function o(prob) { return +Math.max(1.1, 1 / prob).toFixed(2); }
+
+  const markets = [
+    { key: 'btts',      label: 'Beide teams scoren',      odds: o(pBTTS())     },
+    { key: 'over25',    label: 'Over 2.5 doelpunten',     odds: o(pOver(2.5))  },
+    { key: 'under25',   label: 'Onder 2.5 doelpunten',    odds: o(1 - pOver(2.5)) },
+    { key: 'over35',    label: 'Over 3.5 doelpunten',     odds: o(pOver(3.5))  },
+    { key: 'under15',   label: 'Onder 1.5 doelpunten',    odds: o(1 - pOver(1.5)) },
+    { key: 'homeClean', label: m.home + ' clean sheet',   odds: o(pHomeClean)  },
+    { key: 'awayClean', label: m.away + ' clean sheet',   odds: o(pAwayClean)  },
+    { key: 'ht_home',   label: m.home + ' leidt rust',    odds: o(pHtH)        },
+    { key: 'ht_draw',   label: 'Rust gelijk',             odds: o(pHtD)        },
+    { key: 'ht_away',   label: m.away + ' leidt rust',    odds: o(pHtA)        },
+    { key: 'yc_over2',  label: 'Meer dan 2 gele kaarten', odds: 1.8            },
+    { key: 'yc_over4',  label: 'Meer dan 4 gele kaarten', odds: 3.0            },
+    { key: 'rc_yes',    label: 'Minstens 1 rode kaart',   odds: 4.5            },
+    { key: 'pen_yes',   label: 'Penalty in de wedstrijd', odds: 3.5            },
+    { key: 'shootout',  label: 'Strafschoppen',           odds: +(100/m.probs.d + 0.5).toFixed(2), knockoutOnly: true },
+  ];
+  document.getElementById('extra-options').innerHTML = markets
+    .filter(mk => !mk.knockoutOnly || m.phase !== 'group')
+    .map(mk =>
+    `<button class="odd-btn" style="display:flex; justify-content:space-between; align-items:center; width:100%; margin-bottom:0.4rem; text-align:left"
+      onclick="selectExtra('${mk.key}', ${mk.odds}, this)">
+      <span style="font-size:0.85rem">${mk.label}</span>
+      <span class="odd-value" style="font-size:0.95rem">${mk.odds}x</span>
+    </button>`
+  ).join('');
+}
+
+const expandedMatches = new Set();
+
+function toggleOtherBets(matchId, btn) {
+  const el = document.getElementById(`others-${matchId}`);
+  const expanded = el.style.display !== 'none';
+  el.style.display = expanded ? 'none' : 'block';
+  const count = el.querySelectorAll('.bet-row').length;
+  btn.textContent = expanded ? `Meer lezen (${count})` : 'Minder lezen';
+  if (expanded) expandedMatches.delete(matchId);
+  else expandedMatches.add(matchId);
+}
+
+function cancelBet(betId) {
+  const bet = state.bets.find(b => b.id === betId);
+  if (!bet) return;
+  const match = state.matches.find(m => m.id === bet.matchId);
+  if (!match || match.status !== 'open') return toast('Kan alleen annuleren als de wedstrijd nog open is', 'error');
+  if (match.oddsUpdatedAt && (!bet.placedAt || match.oddsUpdatedAt > bet.placedAt))
+    return toast('Odds zijn aangepast na jouw inzet -- annuleren niet meer mogelijk', 'error');
+  const player = state.players.find(p => p.id === bet.playerId);
+  if (player) player.points += bet.stake;
+  state.bets = state.bets.filter(b => b.id !== betId);
+  save();
+  renderAll();
+  toast('Inzet geannuleerd, punten terug', 'success');
+}
+
+function buildCustomOptions(m) {
+  const tab = document.getElementById('custom-tab');
+  const customs = m.customBets || [];
+  if (!tab) return;
+  tab.style.display = customs.length ? 'block' : 'none';
+  document.getElementById('custom-options').innerHTML = customs.map(c =>
+    `<button class="odd-btn" style="display:flex; justify-content:space-between; align-items:center; width:100%; margin-bottom:0.4rem; text-align:left"
+      onclick="selectCustom('${c.id}', ${c.odds}, '${c.label.replace(/'/g, "\\'")}', this)">
+      <span style="font-size:0.85rem">${c.label}</span>
+      <span class="odd-value" style="font-size:0.95rem">${c.odds}x</span>
+    </button>`
+  ).join('');
+}
+
+function selectCustom(customId, odds, label, btn) {
+  document.querySelectorAll('#custom-options .odd-btn').forEach(b => b.classList.remove('selected'));
+  btn.classList.add('selected');
+  selectedOutcome = { type: 'custom', customId, odds, label };
+  updatePayoutPreview();
+}
+
+function selectExtra(market, odds, btn) {
+  document.querySelectorAll('#extra-options .odd-btn').forEach(b => b.classList.remove('selected'));
+  btn.classList.add('selected');
+  selectedOutcome = { type: 'extra', market, odds };
+  updatePayoutPreview();
+}
+
+function updatePayoutPreview() {
+  const stake = parseFloat(document.getElementById('modal-stake').value);
+  const el = document.getElementById('payout-preview-val');
+  if (!selectedOutcome || isNaN(stake) || stake <= 0) { el.textContent = '—'; return; }
+  el.textContent = Math.round(stake * selectedOutcome.odds) + ' pts';
+}
+
+function placeBet() {
+  const playerId = currentUser && currentUser.id;
+  const stake = parseInt(document.getElementById('modal-stake').value);
+  const maxBet = state.settings.maxBet;
+
+  if (!playerId) return toast('Geen speler herkend', 'error');
+  if (!selectedOutcome) return toast('Kies een uitkomst', 'error');
+  if (!stake || stake <= 0) return toast('Voer een geldige inzet in', 'error');
+  if (stake > maxBet) return toast(`Max inzet is ${maxBet} punten`, 'error');
+
+  const player = state.players.find(p => p.id === playerId);
+  if (!player) return toast('Speler niet gevonden', 'error');
+  if (stake > player.points) return toast(`${player.name} heeft niet genoeg punten`, 'error');
+
+  // Check totale inzet op deze wedstrijd
+  const alreadyStaked = state.bets
+    .filter(b => b.matchId === currentMatchId && b.playerId === playerId)
+    .reduce((sum, b) => sum + b.stake, 0);
+  if (alreadyStaked + stake > maxBet)
+    return toast(`Max ${maxBet} pts per wedstrijd totaal (al ${alreadyStaked} pts ingezet)`, 'error');
+
+  player.points -= stake;
+
+  state.bets.push({
+    id: Date.now(),
+    matchId: currentMatchId,
+    playerId,
+    stake,
+    placedAt: Date.now(),
+    ...selectedOutcome
+  });
+
+  save();
+  renderAll();
+  closeModal();
+  toast(`${player.name} zet ${stake} pts in`, 'success');
+}
+
+// ─── SCOREBOARD ───────────────────────────────────────────────────────────────
+function renderScoreboard() {
+  const el = document.getElementById('scoreboard-container');
+  if (!state.players.length) {
+    el.innerHTML = '<div class="empty-state">Voeg spelers toe via Beheer om de ranglijst te zien.</div>';
+    return;
+  }
+
+  // Bereken punten incl uitstaande inzetten per speler
+  const pending = {};
+  state.bets.forEach(b => {
+    const m = state.matches.find(m => m.id == b.matchId);
+    if (m && m.status !== 'done') {
+      pending[b.playerId] = (pending[b.playerId] || 0) + b.stake;
+    }
+  });
+
+  const withTotal = state.players.map(p => ({
+    ...p,
+    total: p.points + (pending[p.id] || 0)
+  }));
+
+  const sorted = [...withTotal].sort((a, b) => b.total - a.total);
+  const rankClass = ['gold', 'silver', 'bronze'];
+  el.innerHTML = `<div class="scoreboard">` + sorted.map((p, i) => {
+    const diff = p.total - state.settings.startPts;
+    const diffHtml = diff === 0
+      ? `<div class="sb-change" style="color:var(--text-muted)">—</div>`
+      : diff > 0
+        ? `<div class="sb-change up">+${diff}</div>`
+        : `<div class="sb-change down">${diff}</div>`;
+    return `<div class="sb-row">
+      <div class="sb-rank ${rankClass[i] || ''}">${i + 1}</div>
+      <div class="sb-name">${p.name}</div>
+      <div class="sb-points">${p.total}</div>
+      ${diffHtml}
+    </div>`;
+  }).join('') + '</div>';
+  renderChart();
+  renderWonLostLeaderboards();
+}
+
+function renderWonLostLeaderboards() {
+  const wonEl = document.getElementById('scoreboard-won');
+  const lostEl = document.getElementById('scoreboard-lost');
+  if (!wonEl || !lostEl) return;
+
+  const stats = {};
+  state.players.forEach(p => { stats[p.id] = { name: p.name, won: 0, lost: 0 }; });
+
+  state.bets.forEach(b => {
+    const m = state.matches.find(m => m.id == b.matchId);
+    if (!m || m.status !== 'done') return;
+    if (!stats[b.playerId]) return;
+    const won = didWin(b, m);
+    if (won === true) stats[b.playerId].won += Math.round(b.stake * b.odds) - b.stake;
+    else if (won === false) stats[b.playerId].lost += b.stake;
+  });
+
+  const players = Object.values(stats);
+
+  const renderMini = (sorted, valueKey, color, prefix) =>
+    `<div class="scoreboard">` + sorted.map((p, i) => {
+      const rankClass = ['gold', 'silver', 'bronze'][i] || '';
+      return `<div class="sb-row">
+        <div class="sb-rank ${rankClass}">${i + 1}</div>
+        <div class="sb-name">${p.name}</div>
+        <div class="sb-points" style="color:${color}; min-width:60px">${prefix}${p[valueKey]}</div>
+        <div class="sb-change"></div>
+      </div>`;
+    }).join('') + '</div>';
+
+  const byWon  = [...players].sort((a, b) => b.won  - a.won);
+  const byLost = [...players].sort((a, b) => b.lost - a.lost);
+
+  wonEl.innerHTML  = renderMini(byWon,  'won',  'var(--success)', '+');
+  lostEl.innerHTML = renderMini(byLost, 'lost', 'var(--danger)',  '-');
+}
+let chartInstance = null;
+
+function parseMatchDate(dateStr) {
+  if (!dateStr) return null;
+  const m = dateStr.match(/(\d{1,2})\/(\d{1,2})\s+(\d{2}):(\d{2})/);
+  if (!m) return null;
+  return new Date(2026, parseInt(m[2]) - 1, parseInt(m[1]), parseInt(m[3]), parseInt(m[4]));
+}
+
+function renderChart() {
+  const done = state.matches
+    .filter(m => m.status === 'done' && m.date)
+    .sort((a, b) => {
+      const da = parseMatchDate(a.date), db = parseMatchDate(b.date);
+      return (da || 0) - (db || 0);
+    });
+
+  const container = document.getElementById('chart-container');
+  if (!container) return;
+  if (!state.players.length) { container.style.display = 'none'; return; }
+  container.style.display = 'block';
+
+  // Bouw cumulatieve punten per speler per wedstrijd op
+  const labels = ['10/06 00:00', ...done.map(m => m.date)];
+  const startPts = state.settings.startPts;
+
+  const colors = ['#ef9f27', '#5dcaa5', '#f09595', '#85b7eb', '#c0dd97', '#f4c0d1', '#afa9ec', '#fac775'];
+
+  const datasets = state.players.map((player, i) => {
+    let running = startPts;
+    const data = [startPts, ...done.map(m => {
+      const bets = state.bets.filter(b => b.matchId === m.id && b.playerId === player.id);
+      bets.forEach(b => {
+        running -= b.stake;
+        if (didWin(b, m)) running += Math.round(b.stake * b.odds);
+      });
+      return running;
+    })];
+    return {
+      label: player.name,
+      data,
+      borderColor: colors[i % colors.length],
+      backgroundColor: 'transparent',
+      tension: 0.3,
+      pointRadius: 4,
+      pointHoverRadius: 6,
+      borderWidth: 2,
+    };
+  });
+
+  const isDark = !document.body.classList.contains('light');
+  const textColor = isDark ? '#8a9e8e' : '#4a6b4e';
+  const gridColor = isDark ? 'rgba(93,202,165,0.1)' : 'rgba(15,110,86,0.1)';
+
+  if (chartInstance) chartInstance.destroy();
+  const ctx = document.getElementById('points-chart').getContext('2d');
+  chartInstance = new Chart(ctx, {
+    type: 'line',
+    data: { labels, datasets },
+    options: {
+      responsive: true,
+      interaction: { mode: 'index', intersect: false },
+      plugins: {
+        legend: {
+          labels: { color: textColor, font: { size: 12 }, boxWidth: 12 }
+        },
+        tooltip: {
+          callbacks: {
+            label: ctx => ` ${ctx.dataset.label}: ${ctx.parsed.y} pts`
+          }
+        }
+      },
+      scales: {
+        x: {
+          ticks: { display: false },
+          grid: { color: gridColor }
+        },
+        y: {
+          ticks: { color: textColor, font: { size: 11 } },
+          grid: { color: gridColor }
+        }
+      }
+    }
+  });
+}
+
+// ─── DASHBOARD ────────────────────────────────────────────────────────────────
+function renderDashboard() {
+  const el = document.getElementById('dashboard-container');
+  if (!el) return;
+
+  // Sync currentUser.id
+  if (currentUser && !currentUser.id) {
+    const match = state.players.find(p => p.name.toLowerCase() === currentUser.name.toLowerCase());
+    if (match) { currentUser.id = match.id; localStorage.setItem('wk2026_name', JSON.stringify(currentUser)); }
+  }
+
+  const sorted = [...state.players].sort((a, b) => b.points - a.points);
+  const player = currentUser ? state.players.find(p => p.id === currentUser.id) : null;
+  const rank = player ? sorted.findIndex(p => p.id === player.id) + 1 : null;
+  const diff = player ? player.points - state.settings.startPts : 0;
+  const diffStr = diff > 0 ? `+${diff}` : `${diff}`;
+  const diffColor = diff > 0 ? 'var(--success)' : diff < 0 ? 'var(--danger)' : 'var(--text-muted)';
+  const rankEmoji = rank === 1 ? '🥇' : rank === 2 ? '🥈' : rank === 3 ? '🥉' : `#${rank}`;
+
+  // Eigen score blok
+  const scoreHtml = player ? `
+    <div class="card" style="text-align:center; padding:1.5rem; margin-bottom:1rem; background:var(--green-mid); border-color:var(--border-strong)">
+      <div style="font-size:0.8rem; color:var(--text-muted); margin-bottom:0.25rem">${player.name}</div>
+      <div style="font-size:2.8rem; font-weight:700; color:var(--amber); line-height:1">${player.points}</div>
+      <div style="font-size:0.85rem; margin-top:0.25rem">
+        <span style="color:var(--text-muted)">punten</span>
+        <span style="color:${diffColor}; margin-left:0.5rem">${diffStr}</span>
+        <span style="margin-left:0.75rem; font-size:1rem">${rankEmoji}</span>
+      </div>
+    </div>` : '';
+
+  // Top 3
+  const top3Html = sorted.length ? `
+    <div class="card" style="margin-bottom:1.25rem">
+      <div class="card-title" style="margin-bottom:0.75rem">Top 3</div>
+      ${sorted.slice(0, 3).map((p, i) => {
+        const medals = ['🥇', '🥈', '🥉'];
+        const isMe = player && p.id === player.id;
+        const d = p.points - state.settings.startPts;
+        return `<div style="display:flex; align-items:center; justify-content:space-between; padding:0.5rem 0; ${i < 2 ? 'border-bottom:1px solid var(--border)' : ''}">
+          <div style="display:flex; align-items:center; gap:0.6rem">
+            <span style="font-size:1.2rem">${medals[i]}</span>
+            <span style="font-weight:${isMe ? '700' : '500'}; color:${isMe ? 'var(--amber)' : 'var(--text-primary)'}">${p.name}</span>
+          </div>
+          <div style="text-align:right">
+            <span style="font-weight:600; color:var(--green-light)">${p.points}</span>
+            <span style="font-size:0.78rem; color:${d >= 0 ? 'var(--success)' : 'var(--danger)'}; margin-left:0.4rem">${d >= 0 ? '+' : ''}${d}</span>
+          </div>
+        </div>`;
+      }).join('')}
+    </div>` : '';
+
+  // Mijn inzetten inline
+  const betsHtml = player ? getMijnInzettenHtml() : '';
+
+  el.innerHTML = scoreHtml + top3Html + betsHtml;
+}
+
+// ─── MIJN INZETTEN ────────────────────────────────────────────────────────────
+function getMijnInzettenHtml() {
+  if (!currentUser || !currentUser.id) return '';
+  const player = state.players.find(p => p.id === currentUser.id);
+  const myBets = state.bets.filter(b => b.playerId === currentUser.id);
+  if (!myBets.length) return '<div class="empty-state" style="padding:1.5rem">Nog geen inzetten geplaatst.</div>';
+
+  const matchIds = [...new Set(myBets.map(b => b.matchId))].sort((a, b) => {
+    const ma = state.matches.find(m => m.id === a);
+    const mb = state.matches.find(m => m.id === b);
+    const da = ma ? parseMatchDate(ma.date) : null;
+    const db = mb ? parseMatchDate(mb.date) : null;
+    if (!da && !db) return 0; if (!da) return 1; if (!db) return -1;
+    return db - da;
+  });
+
+  let totalWon = 0, totalLost = 0, totalPending = 0;
+
+  const cards = matchIds.map(mid => {
+    const m = state.matches.find(m => m.id === mid);
+    if (!m) return '';
+    const bets = myBets.filter(b => b.matchId === mid);
+    const rows = bets.map(b => {
+      let resultHtml = '';
+      if (m.status === 'done') {
+        const won = didWin(b, m);
+        const payout = won ? Math.round(b.stake * b.odds) : 0;
+        if (won) totalWon += (payout - b.stake); else totalLost += b.stake;
+        resultHtml = won
+          ? `<span style="color:var(--success); font-weight:600">+${payout} pts</span>`
+          : `<span style="color:var(--danger)">-${b.stake} pts</span>`;
+      } else {
+        totalPending += b.stake;
+        const potential = Math.round(b.stake * b.odds);
+        resultHtml = `<span style="color:var(--text-muted)">${b.stake} pts <span style="color:var(--amber); font-weight:600">-> ${potential} pts</span></span>`;
+      }
+      return `<div class="bet-row">
+        <span class="bet-prediction">${betLabel(b, m)}</span>
+        <span style="color:var(--text-muted); font-size:0.85rem; display:flex; align-items:center; justify-content:flex-end">${b.odds.toFixed(2)}x</span>
+        <span class="bet-payout">${resultHtml}</span>
+      </div>`;
+    });
+
+    const statusClass = { open: 'status-open', closed: 'status-closed', done: 'status-done' }[m.status];
+    const statusLabel = { open: 'Open', closed: 'Gesloten', done: 'Afgerond' }[m.status];
+
+    return `<div class="match-card" style="margin-bottom:0.75rem">
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:0.75rem">
+        <div>
+          <div style="font-weight:600">${flag(m.home)}${m.home} - ${flag(m.away)}${m.away}</div>
+          <div style="font-size:0.78rem; color:var(--text-muted)">${m.date || ''}</div>
+        </div>
+        <span class="match-status ${statusClass}">${statusLabel}${m.result ? ` ${m.result.homeGoals}-${m.result.awayGoals}` : ''}</span>
+      </div>
+      <div class="bets-table no-cancel" style="grid-template-columns: 1fr 70px 140px; gap:0 1rem">${rows.join('')}</div>
+    </div>`;
+  }).join('');
+
+  const summary = `<div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:0.75rem; margin-bottom:1.25rem">
+    <div style="background:var(--success-bg); border-radius:10px; padding:0.75rem; text-align:center">
+      <div style="font-size:0.72rem; color:var(--text-muted); margin-bottom:0.2rem">Gewonnen</div>
+      <div style="font-size:1.2rem; font-weight:600; color:var(--success)">+${totalWon}</div>
+    </div>
+    <div style="background:var(--danger-bg); border-radius:10px; padding:0.75rem; text-align:center">
+      <div style="font-size:0.72rem; color:var(--text-muted); margin-bottom:0.2rem">Verloren</div>
+      <div style="font-size:1.2rem; font-weight:600; color:var(--danger)">-${totalLost}</div>
+    </div>
+    <div style="background:var(--card-bg); border:1px solid var(--border); border-radius:10px; padding:0.75rem; text-align:center">
+      <div style="font-size:0.72rem; color:var(--text-muted); margin-bottom:0.2rem">Uitstaand</div>
+      <div style="font-size:1.2rem; font-weight:600; color:var(--amber)">${totalPending}</div>
+    </div>
+  </div>`;
+
+  return summary + cards;
+}
+
+function renderMijnInzetten() {
+  // Leeg -- dashboard gebruikt getMijnInzettenHtml direct
+}
+
+// ─── RESET ────────────────────────────────────────────────────────────────────
+async function adminResetPassword() {
+  const name = document.getElementById('reset-pw-name').value.trim();
+  if (!name) return toast('Voer een naam in', 'error');
+  if (!confirm(`Wachtwoord van ${name} resetten?`)) return;
+  await fetch(`https://wk2026-210e6-default-rtdb.europe-west1.firebasedatabase.app/accounts/${name.toLowerCase()}.json`, {
+    method: 'DELETE'
+  });
+  document.getElementById('reset-pw-name').value = '';
+  toast(`Wachtwoord van ${name} gereset`, 'success');
+}
+
+function payoutWinner() {
+  const winner = document.getElementById('winner-result-team').value;
+  if (!winner) return toast('Kies een winnend land', 'error');
+  if (!confirm(`${winner} als WK winnaar bevestigen? Dit kan niet ongedaan worden.`)) return;
+
+  (state.winnerBets || []).forEach(b => {
+    if (b.team === winner && !b.paid) {
+      const player = state.players.find(p => p.id === b.playerId);
+      if (player) player.points += Math.round(b.stake * b.odds);
+      b.paid = true;
+    }
+  });
+  save();
+  renderAll();
+  toast(`WK winnaar ${winner} uitbetaald!`, 'success');
+}
+
+function resetAll() {
+  if (!confirm('Weet je het zeker? Alle data wordt gewist.')) return;
+  localStorage.removeItem('wk2026');
+  state = { settings: { startPts: 1000, maxBet: 200 }, players: [], matches: [], bets: [], winnerBets: [] };
+  fbSet(state).catch(() => {});
+  renderAll();
+  toast('Alles gereset', 'success');
+}
+
+// ─── TOAST ────────────────────────────────────────────────────────────────────
+let toastTimer;
+function toast(msg, type = 'success') {
+  const el = document.getElementById('toast');
+  el.textContent = msg;
+  el.className = 'show ' + type;
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => el.className = '', 2800);
+}
+
+// ─── CLOSE MODAL ON OVERLAY CLICK ────────────────────────────────────────────
+document.getElementById('bet-overlay').addEventListener('click', e => {
+  if (e.target === document.getElementById('bet-overlay')) closeModal();
+});
+
+// ─── START ────────────────────────────────────────────────────────────────────
+load().then(() => { checkName(); applyTheme(); renderDashboard(); });
+</script>
+</body>
+</html>
